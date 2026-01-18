@@ -185,7 +185,7 @@ namespace OrderUp.Core
         public bool ValidateOrder(OrderData order, List<ProductData> suppliedProducts, out int points)
         {
             points = 0;
-            if (order == null)
+            if (order == null || suppliedProducts == null)
             {
                 return false;
             }
@@ -214,7 +214,7 @@ namespace OrderUp.Core
             
             orderSpawnTimes.Remove(removedOrder.instanceId);
 
-            if (!ValidateOrder(order, null, out int points))
+            if (!ValidateOrder(order, order.requiredProducts, out int points))
             {
                 Debug.LogWarning($"OrderManager: Order {order.orderId} failed validation.");
                 return;

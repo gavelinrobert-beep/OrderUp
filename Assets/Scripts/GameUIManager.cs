@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 using OrderUp.Core;
 using OrderUp.Data;
 
@@ -20,6 +21,9 @@ namespace OrderUp.UI
         [Header("End Game UI")]
         [SerializeField] private GameObject roundSummaryPanel;
         [SerializeField] private TextMeshProUGUI summaryText;
+
+        private readonly List<OrderItemUI> activeOrderItems = new List<OrderItemUI>();
+        private bool hasWarnedMissingPrefab;
         
         private void Start()
         {
@@ -39,7 +43,11 @@ namespace OrderUp.UI
             {
                 OrderManager.Instance.OnOrderSpawned += OnOrderSpawned;
                 OrderManager.Instance.OnOrderCompleted += OnOrderCompleted;
+                OrderManager.Instance.OnOrderExpired += OnOrderExpired;
             }
+
+            EnsureOrderListLayout();
+            PopulateExistingOrders();
             
             // Initialize UI
             UpdateScore(0);
@@ -67,6 +75,7 @@ namespace OrderUp.UI
             {
                 OrderManager.Instance.OnOrderSpawned -= OnOrderSpawned;
                 OrderManager.Instance.OnOrderCompleted -= OnOrderCompleted;
+                OrderManager.Instance.OnOrderExpired -= OnOrderExpired;
             }
         }
         
@@ -115,9 +124,19 @@ namespace OrderUp.UI
         private void OnOrderSpawned(OrderData order)
         {
             Debug.Log($"GameUIManager: Order spawned - {order.orderId} ({order.orderType})");
-            
-            // TODO: Instantiate order UI element and add to order list
-            // TODO: Display order details (products, type, timer for express)
+
+            if (orderListContainer == null)
+            {
+                Debug.LogWarning("GameUIManager: Order list container is not assigned.");
+                return;
+            }
+
+            EnsureOrderListLayout();
+            OrderItemUI orderItem = CreateOrderItem(order);
+            if (orderItem != null)
+            {
+                activeOrderItems.Add(orderItem);
+            }
         }
         
         /// <summary>
@@ -127,9 +146,14 @@ namespace OrderUp.UI
         private void OnOrderCompleted(OrderData order)
         {
             Debug.Log($"GameUIManager: Order completed - {order.orderId}");
-            
-            // TODO: Remove order UI element from list
-            // TODO: Play completion animation/effect
+
+            RemoveOrderItem(order);
+        }
+
+        private void OnOrderExpired(OrderData order)
+        {
+            Debug.Log($"GameUIManager: Order expired - {order.orderId}");
+            RemoveOrderItem(order);
         }
         
         /// <summary>
@@ -173,6 +197,102 @@ namespace OrderUp.UI
         {
             Debug.Log("Return to main menu - TODO: Implement scene transition");
             // TODO: Load main menu scene
+        }
+
+        private void PopulateExistingOrders()
+        {
+            if (OrderManager.Instance == null || activeOrderItems.Count > 0)
+            {
+                return;
+            }
+
+            List<OrderData> existingOrders = OrderManager.Instance.ActiveOrders;
+            for (int i = 0; i < existingOrders.Count; i++)
+            {
+                OnOrderSpawned(existingOrders[i]);
+            }
+        }
+
+        private OrderItemUI CreateOrderItem(OrderData order)
+        {
+            GameObject orderObject;
+            if (orderItemPrefab != null)
+            {
+                orderObject = Instantiate(orderItemPrefab, orderListContainer);
+            }
+            else
+            {
+                if (!hasWarnedMissingPrefab)
+                {
+                    Debug.LogWarning("GameUIManager: Order item prefab is not assigned, creating UI elements at runtime.");
+                    hasWarnedMissingPrefab = true;
+                }
+
+                orderObject = new GameObject("OrderItem", typeof(RectTransform));
+                orderObject.transform.SetParent(orderListContainer, false);
+            }
+
+            if (!string.IsNullOrEmpty(order.orderId))
+            {
+                orderObject.name = $"OrderItem_{order.orderId}";
+            }
+
+            OrderItemUI orderItem = orderObject.GetComponent<OrderItemUI>();
+            if (orderItem == null)
+            {
+                orderItem = orderObject.AddComponent<OrderItemUI>();
+            }
+
+            orderItem.Initialize(order);
+            return orderItem;
+        }
+
+        private void RemoveOrderItem(OrderData order)
+        {
+            for (int i = activeOrderItems.Count - 1; i >= 0; i--)
+            {
+                OrderItemUI orderItem = activeOrderItems[i];
+                if (orderItem == null)
+                {
+                    activeOrderItems.RemoveAt(i);
+                    continue;
+                }
+
+                if (orderItem.MatchesOrder(order))
+                {
+                    activeOrderItems.RemoveAt(i);
+                    Destroy(orderItem.gameObject);
+                    return;
+                }
+            }
+        }
+
+        private void EnsureOrderListLayout()
+        {
+            if (orderListContainer == null)
+            {
+                return;
+            }
+
+            VerticalLayoutGroup layoutGroup = orderListContainer.GetComponent<VerticalLayoutGroup>();
+            if (layoutGroup == null)
+            {
+                layoutGroup = orderListContainer.gameObject.AddComponent<VerticalLayoutGroup>();
+                layoutGroup.childAlignment = TextAnchor.UpperRight;
+                layoutGroup.childControlHeight = true;
+                layoutGroup.childControlWidth = true;
+                layoutGroup.childForceExpandHeight = false;
+                layoutGroup.childForceExpandWidth = true;
+                layoutGroup.spacing = 8f;
+            }
+
+            ContentSizeFitter sizeFitter = orderListContainer.GetComponent<ContentSizeFitter>();
+            if (sizeFitter == null)
+            {
+                sizeFitter = orderListContainer.gameObject.AddComponent<ContentSizeFitter>();
+                sizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+                sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            }
         }
     }
 }

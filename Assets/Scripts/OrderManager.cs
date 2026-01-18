@@ -176,6 +176,41 @@ namespace OrderUp.Core
         }
         
         /// <summary>
+        /// Validates that the supplied products satisfy the order requirements.
+        /// </summary>
+        /// <param name="order">The order to validate</param>
+        /// <param name="suppliedProducts">Products supplied for the order</param>
+        /// <param name="points">Points earned for the order (0 when validation fails)</param>
+        /// <returns>True when the order is considered valid</returns>
+        public bool ValidateOrder(OrderData order, List<ProductData> suppliedProducts, out int points)
+        {
+            points = 0;
+            if (order == null || suppliedProducts == null)
+            {
+                return false;
+            }
+
+            if (order.requiredProducts == null)
+            {
+                return false;
+            }
+
+            HashSet<ProductData> suppliedProductSet = new HashSet<ProductData>(suppliedProducts, ProductDataComparer);
+            for (int i = 0; i < order.requiredProducts.Count; i++)
+            {
+                if (!suppliedProductSet.Contains(order.requiredProducts[i]))
+                {
+                    return false;
+                }
+            }
+
+            // TODO: Replace stubbed validation with a full suppliedProducts check (quantities, duplicates).
+            points = CalculatePoints(order);
+
+            return true;
+        }
+
+        /// <summary>
         /// Marks an order as completed
         /// TODO: Add validation that order requirements are actually met
         /// </summary>
@@ -191,11 +226,7 @@ namespace OrderUp.Core
             orderSpawnTimes.Remove(removedOrder.instanceId);
             
             // Calculate points
-            int points = order.basePoints;
-            if (order.orderType == OrderType.Express)
-            {
-                points += order.expressBonus;
-            }
+            int points = CalculatePoints(order);
             
             // Update score
             if (ScoreManager.Instance != null)
@@ -294,6 +325,32 @@ namespace OrderUp.Core
 
             removedOrder = default;
             return false;
+        }
+
+        private static readonly IEqualityComparer<ProductData> ProductDataComparer = new ProductDataReferenceComparer();
+
+        private int CalculatePoints(OrderData order)
+        {
+            int points = order.basePoints;
+            if (order.orderType == OrderType.Express)
+            {
+                points += order.expressBonus;
+            }
+
+            return points;
+        }
+
+        private sealed class ProductDataReferenceComparer : IEqualityComparer<ProductData>
+        {
+            public bool Equals(ProductData x, ProductData y)
+            {
+                return ReferenceEquals(x, y);
+            }
+
+            public int GetHashCode(ProductData obj)
+            {
+                return obj != null ? obj.GetHashCode() : 0;
+            }
         }
 
         private bool IsOrderMatch(OrderData activeOrder, OrderData targetOrder)

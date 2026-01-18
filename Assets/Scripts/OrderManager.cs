@@ -195,16 +195,15 @@ namespace OrderUp.Core
                 return false;
             }
 
-            HashSet<ProductData> suppliedProductSet = new HashSet<ProductData>(suppliedProducts);
             for (int i = 0; i < order.requiredProducts.Count; i++)
             {
-                if (!suppliedProductSet.Contains(order.requiredProducts[i]))
+                if (!suppliedProducts.Contains(order.requiredProducts[i]))
                 {
                     return false;
                 }
             }
 
-            // TODO: Replace stubbed validation with a full suppliedProducts check (quantities, duplicates).
+            // TODO: Replace stubbed validation with a full suppliedProducts check (quantities, duplicates, performance).
             points = CalculatePoints(order);
 
             return true;

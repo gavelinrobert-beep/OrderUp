@@ -185,7 +185,7 @@ namespace OrderUp.Core
         public bool ValidateOrder(OrderData order, List<ProductData> suppliedProducts, out int points)
         {
             points = 0;
-            if (order == null)
+            if (order == null || suppliedProducts == null)
             {
                 return false;
             }

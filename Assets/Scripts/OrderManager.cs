@@ -192,11 +192,7 @@ namespace OrderUp.Core
 
             // TODO: Replace stubbed validation with a real suppliedProducts check.
             // Currently returns true when order data and supplied products are present.
-            points = order.basePoints;
-            if (order.orderType == OrderType.Express)
-            {
-                points += order.expressBonus;
-            }
+            points = CalculatePoints(order);
 
             return true;
         }
@@ -215,13 +211,9 @@ namespace OrderUp.Core
             }
             
             orderSpawnTimes.Remove(removedOrder.instanceId);
-
+            
             // Calculate points
-            int points = order.basePoints;
-            if (order.orderType == OrderType.Express)
-            {
-                points += order.expressBonus;
-            }
+            int points = CalculatePoints(order);
             
             // Update score
             if (ScoreManager.Instance != null)
@@ -320,6 +312,17 @@ namespace OrderUp.Core
 
             removedOrder = default;
             return false;
+        }
+
+        private int CalculatePoints(OrderData order)
+        {
+            int points = order.basePoints;
+            if (order.orderType == OrderType.Express)
+            {
+                points += order.expressBonus;
+            }
+
+            return points;
         }
 
         private bool IsOrderMatch(OrderData activeOrder, OrderData targetOrder)

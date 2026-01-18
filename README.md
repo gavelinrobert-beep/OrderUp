@@ -95,8 +95,8 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
 
 ## 🛠️ Technical Stack
 
-- **Engine**: Unity 2021.3 LTS or newer
-- **Networking**: Mirror (https://mirror-networking.com/)
+- **Engine**: Unity 2022.3 LTS
+- **Networking**: Mirror (https://mirror-networking.com/) - To be integrated
 - **Language**: C#
 - **Version Control**: Git/GitHub
 - **Target Platform**: PC (Windows, Mac, Linux)
@@ -104,24 +104,125 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Unity Hub
-- Unity 2021.3 LTS or newer
+- Unity Hub (latest version)
+- Unity 2022.3 LTS (2022.3.17f1 or newer)
 - Git
 
-### Installation
-1. Clone the repository
+### Installation & Setup
+
+1. **Clone the repository**
    ```bash
    git clone https://github.com/gavelinrobert-beep/OrderUp.git
+   cd OrderUp
    ```
-2. Open Unity Hub
-3. Add the project (select the OrderUp folder)
-4. Open the project in Unity
-5. Install Mirror package via Package Manager or Asset Store
 
-### Running the Game
-1. Open the main scene in Unity
-2. Press Play to test in editor
-3. For multiplayer testing, build and run multiple instances
+2. **Open in Unity Hub**
+   - Open Unity Hub
+   - Click "Add" or "Open"
+   - Navigate to and select the `OrderUp` folder (root directory)
+   - If prompted about Unity version, select Unity 2022.3 LTS
+   - Unity Hub will download the correct version if not already installed
+
+3. **Open the Project**
+   - Once added, click on the project in Unity Hub to open it
+   - Unity will import all assets (this may take a few minutes on first load)
+
+### Running the MVP Prototype
+
+#### In Unity Editor (Recommended for Testing)
+1. In Unity, navigate to `Assets/Scenes/`
+2. Double-click `Main.unity` to open the main scene
+3. Press the **Play** button (▶️) at the top of the editor
+4. The game will auto-start a 5-minute round
+
+**MVP Gameplay Loop:**
+- **Round Timer**: A 5-minute countdown timer runs automatically
+- **Score Tracking**: Team score is displayed in the top-left corner
+- **Order Spawning**: Orders automatically spawn every 30 seconds (max 5 active orders)
+- **Game End**: When the timer reaches 0:00, the round ends and stats are logged to console
+
+**UI Elements:**
+- **Timer** (Top Center): Shows remaining time (MM:SS format)
+  - White when > 2 minutes remaining
+  - Yellow when < 2 minutes remaining
+  - Red when < 1 minute remaining
+- **Score** (Top Left): Displays current team score
+- **Order List** (Right Side): Container for active orders (placeholder for now)
+
+#### Testing the Managers
+The MVP includes three core manager scripts that coordinate the game loop:
+- **GameManager**: Controls round timer and game state
+- **ScoreManager**: Tracks team score and order completions
+- **OrderManager**: Spawns and manages active orders
+
+All managers log their activity to Unity's Console window. Open the Console (Window > General > Console) to see:
+- Round start/end events
+- Order spawn notifications
+- Score updates
+- Timer events
+
+#### Building the Game
+1. Go to **File > Build Settings**
+2. Ensure `Assets/Scenes/Main.unity` is in the "Scenes in Build" list
+3. Select your target platform (PC, Mac, Linux)
+4. Click **Build** or **Build and Run**
+5. Choose an output folder and wait for the build to complete
+
+**Note**: Multiplayer networking with Mirror is not yet integrated. The current MVP focuses on the single-player game loop foundation.
+
+### Project Structure
+
+```
+OrderUp/
+├── Assets/
+│   ├── Scenes/           # Unity scenes (Main.unity)
+│   ├── Scripts/          # C# gameplay scripts
+│   │   ├── GameManager.cs
+│   │   ├── ScoreManager.cs
+│   │   ├── OrderManager.cs
+│   │   ├── GameUIManager.cs
+│   │   ├── ProductData.cs
+│   │   └── OrderData.cs
+│   ├── Prefabs/          # Reusable game objects (to be populated)
+│   ├── ScriptableObjects/ # Data assets
+│   │   ├── Products/     # Product definitions
+│   │   └── Orders/       # Order definitions
+│   ├── UI/               # UI assets (to be populated)
+│   ├── Audio/            # Sound effects and music (to be populated)
+│   └── Art/              # Visual assets (to be populated)
+├── ProjectSettings/      # Unity project configuration
+├── Packages/             # Unity package dependencies
+└── README.md
+```
+
+### Extending the MVP
+
+The codebase includes TODO comments marking areas for future development:
+
+**ScriptableObjects (Data Layer)**
+- Add product icons/sprites
+- Add 3D prefab references for products
+- Add customer info to orders
+- Implement order difficulty levels
+
+**Game Managers**
+- Implement pause/resume functionality
+- Add round summary UI
+- Implement express order timing and expiration
+- Add order validation logic
+
+**UI System**
+- Create order list item prefabs
+- Add visual feedback for order completion
+- Implement round summary screen
+- Add main menu and scene transitions
+
+**Gameplay Mechanics (Future)**
+- Player movement and controls
+- Picker/Packer role mechanics
+- Warehouse environment
+- Cart and item interaction systems
+- Mirror networking integration
 
 ## 🤝 Contributing
 

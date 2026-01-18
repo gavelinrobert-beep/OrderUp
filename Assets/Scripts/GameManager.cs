@@ -16,14 +16,18 @@ namespace OrderUp.Core
         
         [Header("Runtime State")]
         [SerializeField] private bool isRoundActive = false;
+        [SerializeField] private bool isPaused = false;
         [SerializeField] private float remainingTime = 0f;
         
         // Events for other systems to subscribe to
         public event System.Action OnRoundStart;
         public event System.Action OnRoundEnd;
+        public event System.Action OnPause;
+        public event System.Action OnResume;
         public event System.Action<float> OnTimerUpdate; // passes remaining time
         
         public bool IsRoundActive => isRoundActive;
+        public bool IsPaused => isPaused;
         public float RemainingTime => remainingTime;
         
         private void Awake()
@@ -47,7 +51,7 @@ namespace OrderUp.Core
         
         private void Update()
         {
-            if (isRoundActive)
+            if (isRoundActive && !isPaused)
             {
                 UpdateTimer();
             }
@@ -60,7 +64,9 @@ namespace OrderUp.Core
         {
             Debug.Log("GameManager: Starting new round");
             isRoundActive = true;
+            isPaused = false;
             remainingTime = roundDuration;
+            Time.timeScale = 1f;
             
             OnRoundStart?.Invoke();
         }
@@ -72,7 +78,9 @@ namespace OrderUp.Core
         {
             Debug.Log("GameManager: Ending round");
             isRoundActive = false;
+            isPaused = false;
             remainingTime = 0f;
+            Time.timeScale = 1f;
             
             OnRoundEnd?.Invoke();
             
@@ -98,22 +106,32 @@ namespace OrderUp.Core
         
         /// <summary>
         /// Pauses the round (for menu/pause screen)
-        /// TODO: Implement pause functionality
         /// </summary>
         public void PauseRound()
         {
-            // TODO: Implement pause logic
+            if (!isRoundActive || isPaused)
+            {
+                return;
+            }
+
+            isPaused = true;
             Time.timeScale = 0f;
+            OnPause?.Invoke();
         }
         
         /// <summary>
         /// Resumes the round
-        /// TODO: Implement resume functionality
         /// </summary>
         public void ResumeRound()
         {
-            // TODO: Implement resume logic
+            if (!isPaused)
+            {
+                return;
+            }
+
+            isPaused = false;
             Time.timeScale = 1f;
+            OnResume?.Invoke();
         }
     }
 }

@@ -176,6 +176,30 @@ namespace OrderUp.Core
         }
         
         /// <summary>
+        /// Validates that the supplied products satisfy the order requirements.
+        /// </summary>
+        /// <param name="order">The order to validate</param>
+        /// <param name="suppliedProducts">Products supplied for the order</param>
+        /// <param name="points">Points earned for the order</param>
+        /// <returns>True when the order is considered valid</returns>
+        public bool ValidateOrder(OrderData order, List<ProductData> suppliedProducts, out int points)
+        {
+            points = 0;
+            if (order == null)
+            {
+                return false;
+            }
+
+            points = order.basePoints;
+            if (order.orderType == OrderType.Express)
+            {
+                points += order.expressBonus;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Marks an order as completed
         /// TODO: Add validation that order requirements are actually met
         /// </summary>
@@ -189,12 +213,11 @@ namespace OrderUp.Core
             }
             
             orderSpawnTimes.Remove(removedOrder.instanceId);
-            
-            // Calculate points
-            int points = order.basePoints;
-            if (order.orderType == OrderType.Express)
+
+            if (!ValidateOrder(order, null, out int points))
             {
-                points += order.expressBonus;
+                Debug.LogWarning($"OrderManager: Order {order.orderId} failed validation.");
+                return;
             }
             
             // Update score

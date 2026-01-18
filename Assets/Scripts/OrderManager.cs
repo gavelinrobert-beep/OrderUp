@@ -190,8 +190,20 @@ namespace OrderUp.Core
                 return false;
             }
 
-            // TODO: Replace stubbed validation with a real suppliedProducts check.
-            // Currently returns true when order data and supplied products are present.
+            if (order.requiredProducts == null || order.requiredProducts.Count != suppliedProducts.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < order.requiredProducts.Count; i++)
+            {
+                if (!suppliedProducts.Contains(order.requiredProducts[i]))
+                {
+                    return false;
+                }
+            }
+
+            // TODO: Replace stubbed validation with a full suppliedProducts check (quantities, duplicates).
             points = CalculatePoints(order);
 
             return true;

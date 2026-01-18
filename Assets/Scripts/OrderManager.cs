@@ -35,6 +35,7 @@ namespace OrderUp.Core
         private float timeSinceLastSpawn = 0f;
         private int nextOrderInstanceId = 0;
         private readonly Dictionary<int, float> orderSpawnTimes = new Dictionary<int, float>();
+        private readonly List<int> expiredOrderInstanceIds = new List<int>();
         
         // Events for UI and other systems
         public event System.Action<OrderData> OnOrderSpawned;
@@ -234,7 +235,7 @@ namespace OrderUp.Core
 
         private void UpdateOrderExpirations()
         {
-            List<int> expiredInstanceIds = null;
+            expiredOrderInstanceIds.Clear();
 
             for (int i = 0; i < activeOrders.Count; i++)
             {
@@ -246,25 +247,23 @@ namespace OrderUp.Core
 
                 if (!orderSpawnTimes.TryGetValue(activeOrder.instanceId, out float spawnTime))
                 {
+                    Debug.LogWarning($"OrderManager: Missing spawn time for order {activeOrder.orderData.orderId}.");
+                    expiredOrderInstanceIds.Add(activeOrder.instanceId);
                     continue;
                 }
 
                 if (Time.time - spawnTime >= activeOrder.orderData.expressTimeLimit)
                 {
-                    if (expiredInstanceIds == null)
-                    {
-                        expiredInstanceIds = new List<int>();
-                    }
-                    expiredInstanceIds.Add(activeOrder.instanceId);
+                    expiredOrderInstanceIds.Add(activeOrder.instanceId);
                 }
             }
 
-            if (expiredInstanceIds == null)
+            if (expiredOrderInstanceIds.Count == 0)
             {
                 return;
             }
 
-            foreach (int instanceId in expiredInstanceIds)
+            foreach (int instanceId in expiredOrderInstanceIds)
             {
                 ExpireOrderInstance(instanceId);
             }

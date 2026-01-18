@@ -248,7 +248,7 @@ namespace OrderUp.Core
                 if (!orderSpawnTimes.TryGetValue(activeOrder.instanceId, out float spawnTime))
                 {
                     Debug.LogWarning($"OrderManager: Missing spawn time for order {activeOrder.orderData.orderId}.");
-                    // Spawn time is required for express timeouts, so expire after the loop to avoid stale orders.
+                    // If tracking data is missing (e.g., reset or corruption), expire after the loop to avoid stale orders.
                     expiredOrderInstanceIds.Add(activeOrder.instanceId);
                     continue;
                 }

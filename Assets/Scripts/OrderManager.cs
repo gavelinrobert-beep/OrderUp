@@ -190,7 +190,8 @@ namespace OrderUp.Core
                 return false;
             }
 
-            // TODO: Compare suppliedProducts against order requirements.
+            // TODO: Replace stubbed validation with a real suppliedProducts check.
+            // Currently returns true when order data and supplied products are present.
             points = order.basePoints;
             if (order.orderType == OrderType.Express)
             {

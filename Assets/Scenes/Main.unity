@@ -501,7 +501,7 @@ MonoBehaviour:
   timerText: {fileID: 1987654328}
   scoreText: {fileID: 1987654332}
   orderListContainer: {fileID: 1987654336}
-  orderItemPrefab: {fileID: 0}
+  orderItemPrefab: {fileID: 100000, guid: 8a3b4bd53170418283d1282e4d1ed660, type: 3}
   roundSummaryPanel: {fileID: 0}
   summaryText: {fileID: 0}
 --- !u!1 &1987654327

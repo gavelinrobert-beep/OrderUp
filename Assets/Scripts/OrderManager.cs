@@ -11,6 +11,13 @@ namespace OrderUp.Core
     public class OrderManager : MonoBehaviour
     {
         public static OrderManager Instance { get; private set; }
+
+        [System.Serializable]
+        private struct ActiveOrder
+        {
+            public int instanceId;
+            public OrderData orderData;
+        }
         
         [Header("Order Pool")]
         [Tooltip("Pool of orders that can be spawned during gameplay")]
@@ -24,15 +31,29 @@ namespace OrderUp.Core
         [SerializeField] private int maxActiveOrders = 5;
         
         [Header("Runtime State")]
-        [SerializeField] private List<OrderData> activeOrders = new List<OrderData>();
+        [SerializeField] private List<ActiveOrder> activeOrders = new List<ActiveOrder>();
         private float timeSinceLastSpawn = 0f;
+        private int nextOrderInstanceId = 0;
+        private readonly Dictionary<int, float> orderSpawnTimes = new Dictionary<int, float>();
+        private readonly List<int> expiredOrderInstanceIds = new List<int>();
         
         // Events for UI and other systems
         public event System.Action<OrderData> OnOrderSpawned;
         public event System.Action<OrderData> OnOrderCompleted;
         public event System.Action<OrderData> OnOrderExpired;
         
-        public List<OrderData> ActiveOrders => new List<OrderData>(activeOrders);
+        public List<OrderData> ActiveOrders
+        {
+            get
+            {
+                List<OrderData> orders = new List<OrderData>(activeOrders.Count);
+                foreach (ActiveOrder activeOrder in activeOrders)
+                {
+                    orders.Add(activeOrder.orderData);
+                }
+                return orders;
+            }
+        }
         
         private void Awake()
         {
@@ -82,6 +103,8 @@ namespace OrderUp.Core
             Debug.Log("OrderManager: Round started, spawning initial orders");
             activeOrders.Clear();
             timeSinceLastSpawn = 0f;
+            nextOrderInstanceId = 0;
+            orderSpawnTimes.Clear();
             
             // Spawn initial orders
             SpawnInitialOrders();
@@ -94,6 +117,7 @@ namespace OrderUp.Core
         {
             Debug.Log("OrderManager: Round ended, clearing orders");
             activeOrders.Clear();
+            orderSpawnTimes.Clear();
         }
         
         /// <summary>
@@ -115,6 +139,8 @@ namespace OrderUp.Core
         private void UpdateOrderSpawning()
         {
             timeSinceLastSpawn += Time.deltaTime;
+
+            UpdateOrderExpirations();
             
             if (timeSinceLastSpawn >= spawnInterval && activeOrders.Count < maxActiveOrders)
             {
@@ -137,7 +163,13 @@ namespace OrderUp.Core
             
             // Pick a random order from the pool
             OrderData newOrder = availableOrders[Random.Range(0, availableOrders.Count)];
-            activeOrders.Add(newOrder);
+            int instanceId = nextOrderInstanceId++;
+            activeOrders.Add(new ActiveOrder
+            {
+                instanceId = instanceId,
+                orderData = newOrder
+            });
+            orderSpawnTimes[instanceId] = Time.time;
             
             Debug.Log($"OrderManager: Spawned new order: {newOrder.orderId} (Type: {newOrder.orderType})");
             OnOrderSpawned?.Invoke(newOrder);
@@ -150,13 +182,13 @@ namespace OrderUp.Core
         /// <param name="order">The order to complete</param>
         public void CompleteOrder(OrderData order)
         {
-            if (!activeOrders.Contains(order))
+            if (!TryRemoveActiveOrder(order, out ActiveOrder removedOrder))
             {
                 Debug.LogWarning($"OrderManager: Trying to complete order {order.orderId} that is not active!");
                 return;
             }
             
-            activeOrders.Remove(order);
+            orderSpawnTimes.Remove(removedOrder.instanceId);
             
             // Calculate points
             int points = order.basePoints;
@@ -177,19 +209,124 @@ namespace OrderUp.Core
         
         /// <summary>
         /// Handles order expiration (for express orders)
-        /// TODO: Implement express order timing and expiration
         /// </summary>
         /// <param name="order">The order that expired</param>
         public void ExpireOrder(OrderData order)
         {
-            if (!activeOrders.Contains(order))
+            if (!TryGetActiveOrder(order, out ActiveOrder activeOrder))
             {
                 return;
             }
-            
-            activeOrders.Remove(order);
-            Debug.Log($"OrderManager: Order {order.orderId} expired!");
-            OnOrderExpired?.Invoke(order);
+
+            ExpireOrderInstance(activeOrder.instanceId);
+        }
+
+        private void ExpireOrderInstance(int instanceId)
+        {
+            if (!TryRemoveActiveOrder(instanceId, out ActiveOrder removedOrder))
+            {
+                return;
+            }
+
+            orderSpawnTimes.Remove(removedOrder.instanceId);
+            Debug.Log($"OrderManager: Order {removedOrder.orderData.orderId} expired!");
+            OnOrderExpired?.Invoke(removedOrder.orderData);
+        }
+
+        private void UpdateOrderExpirations()
+        {
+            expiredOrderInstanceIds.Clear();
+
+            for (int i = 0; i < activeOrders.Count; i++)
+            {
+                ActiveOrder activeOrder = activeOrders[i];
+                if (activeOrder.orderData.orderType != OrderType.Express)
+                {
+                    continue;
+                }
+
+                if (!orderSpawnTimes.TryGetValue(activeOrder.instanceId, out float spawnTime))
+                {
+                    Debug.LogWarning($"OrderManager: Missing spawn time for order {activeOrder.orderData.orderId}.");
+                    // If tracking data is missing (e.g., reset or corruption), expire after the loop to avoid stale orders.
+                    expiredOrderInstanceIds.Add(activeOrder.instanceId);
+                    continue;
+                }
+
+                if (Time.time - spawnTime >= activeOrder.orderData.expressTimeLimit)
+                {
+                    expiredOrderInstanceIds.Add(activeOrder.instanceId);
+                }
+            }
+
+            foreach (int instanceId in expiredOrderInstanceIds)
+            {
+                ExpireOrderInstance(instanceId);
+            }
+        }
+
+        private bool TryGetActiveOrder(OrderData order, out ActiveOrder activeOrder)
+        {
+            for (int i = 0; i < activeOrders.Count; i++)
+            {
+                if (IsOrderMatch(activeOrders[i].orderData, order))
+                {
+                    activeOrder = activeOrders[i];
+                    return true;
+                }
+            }
+
+            activeOrder = default;
+            return false;
+        }
+
+        private bool TryRemoveActiveOrder(OrderData order, out ActiveOrder removedOrder)
+        {
+            for (int i = 0; i < activeOrders.Count; i++)
+            {
+                if (IsOrderMatch(activeOrders[i].orderData, order))
+                {
+                    removedOrder = activeOrders[i];
+                    activeOrders.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            removedOrder = default;
+            return false;
+        }
+
+        private bool IsOrderMatch(OrderData activeOrder, OrderData targetOrder)
+        {
+            if (!activeOrder || !targetOrder)
+            {
+                return false;
+            }
+
+            bool activeHasId = !string.IsNullOrEmpty(activeOrder.orderId);
+            bool targetHasId = !string.IsNullOrEmpty(targetOrder.orderId);
+            if (activeHasId && targetHasId)
+            {
+                return activeOrder.orderId == targetOrder.orderId;
+            }
+
+            return activeOrder == targetOrder;
+        }
+
+        private bool TryRemoveActiveOrder(int instanceId, out ActiveOrder removedOrder)
+        {
+            for (int i = 0; i < activeOrders.Count; i++)
+            {
+                if (activeOrders[i].instanceId == instanceId)
+                {
+                    removedOrder = activeOrders[i];
+                    activeOrders.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            removedOrder = default;
+            return false;
         }
     }
 }

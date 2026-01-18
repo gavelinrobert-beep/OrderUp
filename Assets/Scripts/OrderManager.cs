@@ -298,12 +298,12 @@ namespace OrderUp.Core
 
         private bool IsOrderMatch(OrderData activeOrder, OrderData targetOrder)
         {
-            if (activeOrder == null || targetOrder == null)
+            if (!activeOrder || !targetOrder)
             {
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(activeOrder.orderId) && !string.IsNullOrEmpty(targetOrder.orderId))
+            if (!string.IsNullOrEmpty(activeOrder.orderId) || !string.IsNullOrEmpty(targetOrder.orderId))
             {
                 return activeOrder.orderId == targetOrder.orderId;
             }

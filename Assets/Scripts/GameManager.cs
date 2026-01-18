@@ -22,6 +22,7 @@ namespace OrderUp.Core
         // Events for other systems to subscribe to
         public event System.Action OnRoundStart;
         public event System.Action OnRoundEnd;
+        public event System.Action OnRoundSummary;
         public event System.Action OnPause;
         public event System.Action OnResume;
         public event System.Action<float> OnTimerUpdate; // passes remaining time
@@ -83,8 +84,8 @@ namespace OrderUp.Core
             Time.timeScale = 1f;
             
             OnRoundEnd?.Invoke();
+            OnRoundSummary?.Invoke();
             
-            // TODO: Trigger round summary UI
             // TODO: Calculate final scores and statistics
         }
         

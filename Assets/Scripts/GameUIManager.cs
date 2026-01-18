@@ -27,7 +27,7 @@ namespace OrderUp.UI
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.OnTimerUpdate += UpdateTimer;
-                GameManager.Instance.OnRoundEnd += ShowRoundSummary;
+                GameManager.Instance.OnRoundSummary += ShowRoundSummary;
             }
             
             if (ScoreManager.Instance != null)
@@ -55,7 +55,7 @@ namespace OrderUp.UI
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.OnTimerUpdate -= UpdateTimer;
-                GameManager.Instance.OnRoundEnd -= ShowRoundSummary;
+                GameManager.Instance.OnRoundSummary -= ShowRoundSummary;
             }
             
             if (ScoreManager.Instance != null)

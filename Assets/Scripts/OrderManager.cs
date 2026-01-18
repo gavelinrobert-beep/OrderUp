@@ -185,11 +185,12 @@ namespace OrderUp.Core
         public bool ValidateOrder(OrderData order, List<ProductData> suppliedProducts, out int points)
         {
             points = 0;
-            if (order == null || suppliedProducts == null)
+            if (order == null)
             {
                 return false;
             }
 
+            // TODO: Compare suppliedProducts against order requirements.
             points = order.basePoints;
             if (order.orderType == OrderType.Express)
             {
@@ -214,10 +215,11 @@ namespace OrderUp.Core
             
             orderSpawnTimes.Remove(removedOrder.instanceId);
 
-            if (!ValidateOrder(order, order.requiredProducts, out int points))
+            // Calculate points
+            int points = order.basePoints;
+            if (order.orderType == OrderType.Express)
             {
-                Debug.LogWarning($"OrderManager: Order {order.orderId} failed validation.");
-                return;
+                points += order.expressBonus;
             }
             
             // Update score

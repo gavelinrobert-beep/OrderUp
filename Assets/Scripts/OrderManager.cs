@@ -248,7 +248,8 @@ namespace OrderUp.Core
                 if (!orderSpawnTimes.TryGetValue(activeOrder.instanceId, out float spawnTime))
                 {
                     Debug.LogWarning($"OrderManager: Missing spawn time for order {activeOrder.orderData.orderId}.");
-                    orderSpawnTimes[activeOrder.instanceId] = Time.time;
+                    orderSpawnTimes[activeOrder.instanceId] = Time.time - activeOrder.orderData.expressTimeLimit;
+                    expiredOrderInstanceIds.Add(activeOrder.instanceId);
                     continue;
                 }
 
@@ -256,11 +257,6 @@ namespace OrderUp.Core
                 {
                     expiredOrderInstanceIds.Add(activeOrder.instanceId);
                 }
-            }
-
-            if (expiredOrderInstanceIds.Count == 0)
-            {
-                return;
             }
 
             foreach (int instanceId in expiredOrderInstanceIds)

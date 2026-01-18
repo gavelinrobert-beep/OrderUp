@@ -190,14 +190,15 @@ namespace OrderUp.Core
                 return false;
             }
 
-            if (order.requiredProducts == null || order.requiredProducts.Count != suppliedProducts.Count)
+            if (order.requiredProducts == null)
             {
                 return false;
             }
 
+            HashSet<ProductData> suppliedProductSet = new HashSet<ProductData>(suppliedProducts);
             for (int i = 0; i < order.requiredProducts.Count; i++)
             {
-                if (!suppliedProducts.Contains(order.requiredProducts[i]))
+                if (!suppliedProductSet.Contains(order.requiredProducts[i]))
                 {
                     return false;
                 }

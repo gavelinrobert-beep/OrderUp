@@ -248,7 +248,7 @@ namespace OrderUp.Core
                 if (!orderSpawnTimes.TryGetValue(activeOrder.instanceId, out float spawnTime))
                 {
                     Debug.LogWarning($"OrderManager: Missing spawn time for order {activeOrder.orderData.orderId}.");
-                    expiredOrderInstanceIds.Add(activeOrder.instanceId);
+                    orderSpawnTimes[activeOrder.instanceId] = Time.time;
                     continue;
                 }
 

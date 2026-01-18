@@ -269,7 +269,7 @@ namespace OrderUp.Core
         {
             for (int i = 0; i < activeOrders.Count; i++)
             {
-                if (activeOrders[i].orderData == order)
+                if (IsOrderMatch(activeOrders[i].orderData, order))
                 {
                     activeOrder = activeOrders[i];
                     return true;
@@ -284,7 +284,7 @@ namespace OrderUp.Core
         {
             for (int i = 0; i < activeOrders.Count; i++)
             {
-                if (activeOrders[i].orderData == order)
+                if (IsOrderMatch(activeOrders[i].orderData, order))
                 {
                     removedOrder = activeOrders[i];
                     activeOrders.RemoveAt(i);
@@ -294,6 +294,21 @@ namespace OrderUp.Core
 
             removedOrder = default;
             return false;
+        }
+
+        private bool IsOrderMatch(OrderData activeOrder, OrderData targetOrder)
+        {
+            if (activeOrder == null || targetOrder == null)
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(activeOrder.orderId) && !string.IsNullOrEmpty(targetOrder.orderId))
+            {
+                return activeOrder.orderId == targetOrder.orderId;
+            }
+
+            return activeOrder == targetOrder;
         }
 
         private bool TryRemoveActiveOrder(int instanceId, out ActiveOrder removedOrder)

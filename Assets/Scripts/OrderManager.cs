@@ -180,7 +180,7 @@ namespace OrderUp.Core
         /// </summary>
         /// <param name="order">The order to validate</param>
         /// <param name="suppliedProducts">Products supplied for the order</param>
-        /// <param name="points">Points earned for the order</param>
+        /// <param name="points">Points earned for the order (0 when validation fails)</param>
         /// <returns>True when the order is considered valid</returns>
         public bool ValidateOrder(OrderData order, List<ProductData> suppliedProducts, out int points)
         {
@@ -195,15 +195,16 @@ namespace OrderUp.Core
                 return false;
             }
 
+            HashSet<ProductData> suppliedProductSet = new HashSet<ProductData>(suppliedProducts, ProductDataComparer);
             for (int i = 0; i < order.requiredProducts.Count; i++)
             {
-                if (!suppliedProducts.Contains(order.requiredProducts[i]))
+                if (!suppliedProductSet.Contains(order.requiredProducts[i]))
                 {
                     return false;
                 }
             }
 
-            // TODO: Replace stubbed validation with a full suppliedProducts check (quantities, duplicates, performance).
+            // TODO: Replace stubbed validation with a full suppliedProducts check (quantities, duplicates).
             points = CalculatePoints(order);
 
             return true;
@@ -326,6 +327,8 @@ namespace OrderUp.Core
             return false;
         }
 
+        private static readonly IEqualityComparer<ProductData> ProductDataComparer = new ProductDataReferenceComparer();
+
         private int CalculatePoints(OrderData order)
         {
             int points = order.basePoints;
@@ -335,6 +338,19 @@ namespace OrderUp.Core
             }
 
             return points;
+        }
+
+        private sealed class ProductDataReferenceComparer : IEqualityComparer<ProductData>
+        {
+            public bool Equals(ProductData x, ProductData y)
+            {
+                return ReferenceEquals(x, y);
+            }
+
+            public int GetHashCode(ProductData obj)
+            {
+                return obj != null ? obj.GetHashCode() : 0;
+            }
         }
 
         private bool IsOrderMatch(OrderData activeOrder, OrderData targetOrder)

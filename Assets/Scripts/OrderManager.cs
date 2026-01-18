@@ -303,7 +303,9 @@ namespace OrderUp.Core
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(activeOrder.orderId) || !string.IsNullOrEmpty(targetOrder.orderId))
+            bool activeHasId = !string.IsNullOrEmpty(activeOrder.orderId);
+            bool targetHasId = !string.IsNullOrEmpty(targetOrder.orderId);
+            if (activeHasId && targetHasId)
             {
                 return activeOrder.orderId == targetOrder.orderId;
             }

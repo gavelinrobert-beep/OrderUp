@@ -7,7 +7,10 @@ namespace OrderUp.Data
     /// </summary>
     public enum ProductCategory
     {
-        Uncategorized
+        Uncategorized,
+        Food,
+        Electronics,
+        Clothing
     }
 
     /// <summary>

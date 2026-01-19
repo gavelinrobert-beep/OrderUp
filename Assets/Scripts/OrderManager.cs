@@ -226,7 +226,24 @@ namespace OrderUp.Core
             float? completionTime = null;
             if (orderSpawnTimes.TryGetValue(removedOrder.instanceId, out float spawnTime))
             {
-                completionTime = Mathf.Max(0f, Time.time - spawnTime);
+                float rawCompletionTime = Time.time - spawnTime;
+                if (rawCompletionTime < 0f)
+                {
+                    string orderId = "Unknown Order";
+                    if (removedOrder.orderData != null && !string.IsNullOrEmpty(removedOrder.orderData.orderId))
+                    {
+                        orderId = removedOrder.orderData.orderId;
+                    }
+                    else if (order != null && !string.IsNullOrEmpty(order.orderId))
+                    {
+                        orderId = order.orderId;
+                    }
+
+                    Debug.LogWarning(
+                        $"OrderManager: Completion time for order {orderId} was negative: {rawCompletionTime}s.");
+                }
+
+                completionTime = Mathf.Max(0f, rawCompletionTime);
             }
 
             orderSpawnTimes.Remove(removedOrder.instanceId);

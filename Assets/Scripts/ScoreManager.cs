@@ -106,7 +106,7 @@ namespace OrderUp.Core
         /// </summary>
         /// <param name="isExpress">Whether the order was an express order</param>
         /// <param name="points">Points earned from the order</param>
-        /// <param name="completionTime">Time it took to complete the order (in seconds)</param>
+        /// <param name="completionTime">Optional time it took to complete the order (in seconds)</param>
         public void CompleteOrder(bool isExpress, int points, float? completionTime = null)
         {
             ordersCompleted++;
@@ -120,7 +120,7 @@ namespace OrderUp.Core
                 standardOrdersCompleted++;
             }
             
-            if (completionTime.HasValue && completionTime.Value >= 0f)
+            if (completionTime.HasValue)
             {
                 totalCompletionTime += completionTime.Value;
                 timedOrdersCompleted++;

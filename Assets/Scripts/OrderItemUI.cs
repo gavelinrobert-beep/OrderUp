@@ -65,6 +65,21 @@ namespace OrderUp.UI
             return order == orderData;
         }
 
+        /// <summary>
+        /// Highlights the UI when an order is completed.
+        /// </summary>
+        public void PlayCompletionFeedback(Color textColor, Color backgroundColor)
+        {
+            ApplyTextColor(orderTypeText, textColor);
+            ApplyTextColor(productListText, textColor);
+            ApplyTextColor(timerText, textColor);
+
+            if (TryGetComponent(out Image background))
+            {
+                background.color = backgroundColor;
+            }
+        }
+
         private void RefreshContent()
         {
             if (order == null)
@@ -126,6 +141,14 @@ namespace OrderUp.UI
             }
 
             return builder.ToString();
+        }
+
+        private static void ApplyTextColor(TextMeshProUGUI textField, Color color)
+        {
+            if (textField != null)
+            {
+                textField.color = color;
+            }
         }
 
         private void UpdateTimer()

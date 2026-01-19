@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 using System.Collections.Generic;
 using OrderUp.Core;
 using OrderUp.Data;
@@ -17,12 +18,18 @@ namespace OrderUp.UI
         [SerializeField] private TextMeshProUGUI scoreText;
         [SerializeField] private Transform orderListContainer;
         [SerializeField] private GameObject orderItemPrefab; // TODO: Create order item prefab
-        
+
+        [Header("Order Completion Feedback")]
+        [SerializeField] private float orderCompletionDelay = 1.25f;
+        [SerializeField] private Color completionTextColor = new Color(0.2f, 0.9f, 0.4f, 1f);
+        [SerializeField] private Color completionBackgroundColor = new Color(0.2f, 0.9f, 0.4f, 0.2f);
+
         [Header("End Game UI")]
         [SerializeField] private GameObject roundSummaryPanel;
         [SerializeField] private TextMeshProUGUI summaryText;
 
         private readonly List<OrderItemUI> activeOrderItems = new List<OrderItemUI>();
+        private readonly HashSet<OrderItemUI> completingOrderItems = new HashSet<OrderItemUI>();
         private bool hasWarnedMissingPrefab;
         
         private void Start()
@@ -147,7 +154,25 @@ namespace OrderUp.UI
         {
             Debug.Log($"GameUIManager: Order completed - {order.orderId}");
 
-            RemoveOrderItem(order);
+            OrderItemUI orderItem = FindOrderItem(order);
+            if (orderItem == null)
+            {
+                return;
+            }
+
+            if (!TryBeginCompletionFeedback(orderItem))
+            {
+                Debug.LogWarning($"GameUIManager: Completion feedback already in progress for order {order.orderId}.");
+                return;
+            }
+            orderItem.PlayCompletionFeedback(completionTextColor, completionBackgroundColor);
+            if (orderCompletionDelay <= 0f)
+            {
+                RemoveOrderItem(orderItem);
+                return;
+            }
+
+            StartCoroutine(RemoveOrderItemAfterDelay(orderItem, orderCompletionDelay));
         }
 
         private void OnOrderExpired(OrderData order)
@@ -247,7 +272,7 @@ namespace OrderUp.UI
             return orderItem;
         }
 
-        private void RemoveOrderItem(OrderData order)
+        private OrderItemUI FindOrderItem(OrderData order)
         {
             for (int i = activeOrderItems.Count - 1; i >= 0; i--)
             {
@@ -260,11 +285,45 @@ namespace OrderUp.UI
 
                 if (orderItem.MatchesOrder(order))
                 {
-                    activeOrderItems.RemoveAt(i);
-                    Destroy(orderItem.gameObject);
-                    return;
+                    return orderItem;
                 }
             }
+
+            return null;
+        }
+
+        private void RemoveOrderItem(OrderData order)
+        {
+            OrderItemUI orderItem = FindOrderItem(order);
+            if (orderItem == null)
+            {
+                return;
+            }
+
+            RemoveOrderItem(orderItem);
+        }
+
+        private void RemoveOrderItem(OrderItemUI orderItem)
+        {
+            completingOrderItems.Remove(orderItem);
+            if (orderItem == null)
+            {
+                return;
+            }
+
+            activeOrderItems.Remove(orderItem);
+            Destroy(orderItem.gameObject);
+        }
+
+        private IEnumerator RemoveOrderItemAfterDelay(OrderItemUI orderItem, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            RemoveOrderItem(orderItem);
+        }
+
+        private bool TryBeginCompletionFeedback(OrderItemUI orderItem)
+        {
+            return completingOrderItems.Add(orderItem);
         }
 
         private void EnsureOrderListLayout()

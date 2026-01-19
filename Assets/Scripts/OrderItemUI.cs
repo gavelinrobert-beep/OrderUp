@@ -15,6 +15,7 @@ namespace OrderUp.UI
         [SerializeField] private TextMeshProUGUI productListText;
         [SerializeField] private TextMeshProUGUI timerText;
 
+        private Image backgroundImage;
         private OrderData order;
         private float spawnTime;
         private bool hasExpressTimer;
@@ -23,6 +24,7 @@ namespace OrderUp.UI
         {
             EnsureLayout();
             EnsureTextFields();
+            TryGetComponent(out backgroundImage);
         }
 
         /// <summary>
@@ -63,6 +65,21 @@ namespace OrderUp.UI
             }
 
             return order == orderData;
+        }
+
+        /// <summary>
+        /// Highlights the UI when an order is completed.
+        /// </summary>
+        public void PlayCompletionFeedback(Color textColor, Color backgroundColor)
+        {
+            ApplyTextColor(orderTypeText, textColor);
+            ApplyTextColor(productListText, textColor);
+            ApplyTextColor(timerText, textColor);
+
+            if (backgroundImage != null)
+            {
+                backgroundImage.color = backgroundColor;
+            }
         }
 
         private void RefreshContent()
@@ -126,6 +143,14 @@ namespace OrderUp.UI
             }
 
             return builder.ToString();
+        }
+
+        private static void ApplyTextColor(TextMeshProUGUI textField, Color color)
+        {
+            if (textField != null)
+            {
+                textField.color = color;
+            }
         }
 
         private void UpdateTimer()

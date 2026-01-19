@@ -8,7 +8,8 @@ namespace OrderUp.UI
     /// </summary>
     public class ImGuiHudManager : MonoBehaviour
     {
-        private static int nextWindowId = 9000;
+        private const int HudWindowIdBase = 9000;
+        private static int nextWindowId = HudWindowIdBase;
 
         [Header("HUD Window")]
         [SerializeField] private bool showHudWindow = true;

@@ -19,7 +19,6 @@ namespace OrderUp.Core
 
         [Header("State Tracking")]
         [SerializeField] private int currentRound = 0;
-        [SerializeField] private int currentScore = 0;
         [SerializeField] private GameState currentState = GameState.WaitingForRound;
 
         public event System.Action<int> OnRoundChanged;
@@ -27,7 +26,7 @@ namespace OrderUp.Core
         public event System.Action<GameState> OnStateChanged;
 
         public int CurrentRound => currentRound;
-        public int CurrentScore => currentScore;
+        public int CurrentScore => ScoreManager.Instance != null ? ScoreManager.Instance.CurrentScore : 0;
         public GameState CurrentState => currentState;
 
         private bool isGameManagerSubscribed;
@@ -62,10 +61,8 @@ namespace OrderUp.Core
         public void ResetState()
         {
             currentRound = 0;
-            currentScore = 0;
             SetState(GameState.WaitingForRound);
             OnRoundChanged?.Invoke(currentRound);
-            OnScoreUpdated?.Invoke(currentScore);
         }
 
         private void TrySubscribe()
@@ -138,8 +135,7 @@ namespace OrderUp.Core
 
         private void HandleScoreChanged(int score)
         {
-            currentScore = score;
-            OnScoreUpdated?.Invoke(currentScore);
+            OnScoreUpdated?.Invoke(score);
         }
 
         private void SyncStateFromGameManager()

@@ -29,6 +29,7 @@ namespace OrderUp.UI
         [SerializeField] private TextMeshProUGUI summaryText;
 
         private readonly List<OrderItemUI> activeOrderItems = new List<OrderItemUI>();
+        private readonly HashSet<OrderItemUI> completingOrderItems = new HashSet<OrderItemUI>();
         private bool hasWarnedMissingPrefab;
         
         private void Start()
@@ -159,6 +160,11 @@ namespace OrderUp.UI
                 return;
             }
 
+            if (!TryBeginCompletionFeedback(orderItem))
+            {
+                Debug.LogWarning($"GameUIManager: Completion feedback already in progress for order {order.orderId}.");
+                return;
+            }
             orderItem.PlayCompletionFeedback(completionTextColor, completionBackgroundColor);
             if (orderCompletionDelay <= 0f)
             {
@@ -299,6 +305,7 @@ namespace OrderUp.UI
 
         private void RemoveOrderItem(OrderItemUI orderItem)
         {
+            completingOrderItems.Remove(orderItem);
             if (orderItem == null)
             {
                 return;
@@ -312,6 +319,11 @@ namespace OrderUp.UI
         {
             yield return new WaitForSeconds(delay);
             RemoveOrderItem(orderItem);
+        }
+
+        private bool TryBeginCompletionFeedback(OrderItemUI orderItem)
+        {
+            return completingOrderItems.Add(orderItem);
         }
 
         private void EnsureOrderListLayout()

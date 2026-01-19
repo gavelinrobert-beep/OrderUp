@@ -15,6 +15,7 @@ namespace OrderUp.UI
         [SerializeField] private TextMeshProUGUI productListText;
         [SerializeField] private TextMeshProUGUI timerText;
 
+        private Image backgroundImage;
         private OrderData order;
         private float spawnTime;
         private bool hasExpressTimer;
@@ -23,6 +24,7 @@ namespace OrderUp.UI
         {
             EnsureLayout();
             EnsureTextFields();
+            TryGetComponent(out backgroundImage);
         }
 
         /// <summary>
@@ -74,9 +76,9 @@ namespace OrderUp.UI
             ApplyTextColor(productListText, textColor);
             ApplyTextColor(timerText, textColor);
 
-            if (TryGetComponent(out Image background))
+            if (backgroundImage != null)
             {
-                background.color = backgroundColor;
+                backgroundImage.color = backgroundColor;
             }
         }
 

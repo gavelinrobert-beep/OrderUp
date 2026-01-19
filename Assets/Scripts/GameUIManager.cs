@@ -227,7 +227,12 @@ namespace OrderUp.UI
             {
                 roundSummaryPanel.SetActive(false);
             }
-            
+
+            if (GameStateManager.Instance != null)
+            {
+                GameStateManager.Instance.ResetState();
+            }
+
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.StartRound();

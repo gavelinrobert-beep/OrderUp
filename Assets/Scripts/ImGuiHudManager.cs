@@ -8,6 +8,8 @@ namespace OrderUp.UI
     /// </summary>
     public class ImGuiHudManager : MonoBehaviour
     {
+        private static int nextWindowId = 9000;
+
         [Header("HUD Window")]
         [SerializeField] private bool showHudWindow = true;
         [SerializeField] private Rect hudWindowRect = new Rect(16f, 16f, 260f, 140f);
@@ -16,8 +18,16 @@ namespace OrderUp.UI
         [SerializeField] private bool showSummaryWindow = true;
         [SerializeField] private Rect summaryWindowRect = new Rect(16f, 170f, 320f, 180f);
 
+        private int hudWindowId;
+        private int summaryWindowId;
         private bool summaryVisible;
         private string summaryText = string.Empty;
+
+        private void Awake()
+        {
+            hudWindowId = nextWindowId++;
+            summaryWindowId = nextWindowId++;
+        }
 
         private void OnEnable()
         {
@@ -41,12 +51,12 @@ namespace OrderUp.UI
         {
             if (showHudWindow)
             {
-                hudWindowRect = GUILayout.Window(GetInstanceID(), hudWindowRect, DrawHudWindow, "Order Up HUD");
+                hudWindowRect = GUILayout.Window(hudWindowId, hudWindowRect, DrawHudWindow, "Order Up HUD");
             }
 
             if (showSummaryWindow && summaryVisible)
             {
-                summaryWindowRect = GUILayout.Window(GetInstanceID() + 1, summaryWindowRect, DrawSummaryWindow, "Round Summary");
+                summaryWindowRect = GUILayout.Window(summaryWindowId, summaryWindowRect, DrawSummaryWindow, "Round Summary");
             }
         }
 

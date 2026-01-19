@@ -59,6 +59,15 @@ namespace OrderUp.Core
             UnsubscribeFromManagers();
         }
 
+        public void ResetState()
+        {
+            currentRound = 0;
+            currentScore = 0;
+            SetState(GameState.WaitingForRound);
+            OnRoundChanged?.Invoke(currentRound);
+            OnScoreUpdated?.Invoke(currentScore);
+        }
+
         private void TrySubscribe()
         {
             if (GameManager.Instance != null && !isGameManagerSubscribed)

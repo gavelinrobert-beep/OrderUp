@@ -147,13 +147,16 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
   - Yellow when < 2 minutes remaining
   - Red when < 1 minute remaining
 - **Score** (Top Left): Displays current team score
+- **Round Counter** (Top Left): Displays current round (requires a round text reference)
 - **Order List** (Right Side): Container for active orders (placeholder for now)
+- **IMGUI HUD** (Optional): Immediate-mode overlay showing score, round, timer, and summary
 
 #### Testing the Managers
-The MVP includes three core manager scripts that coordinate the game loop:
+The MVP includes core manager scripts that coordinate the game loop:
 - **GameManager**: Controls round timer and game state
 - **ScoreManager**: Tracks team score and order completions
 - **OrderManager**: Spawns and manages active orders
+- **GameStateManager**: Tracks round count, state transitions, and exposes score updates
 
 All managers log their activity to Unity's Console window. Open the Console (Window > General > Console) to see:
 - Round start/end events

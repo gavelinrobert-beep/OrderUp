@@ -223,15 +223,38 @@ namespace OrderUp.Core
                 return;
             }
             
+            float? completionTime = null;
+            if (orderSpawnTimes.TryGetValue(removedOrder.instanceId, out float spawnTime))
+            {
+                float rawCompletionTime = Time.time - spawnTime;
+                if (rawCompletionTime < 0f)
+                {
+                    string orderId = "Unknown Order";
+                    if (removedOrder.orderData != null && !string.IsNullOrEmpty(removedOrder.orderData.orderId))
+                    {
+                        orderId = removedOrder.orderData.orderId;
+                    }
+                    else if (order != null && !string.IsNullOrEmpty(order.orderId))
+                    {
+                        orderId = order.orderId;
+                    }
+
+                    Debug.LogWarning(
+                        $"OrderManager: Completion time for order {orderId} was negative: {rawCompletionTime}s.");
+                }
+
+                completionTime = Mathf.Max(0f, rawCompletionTime);
+            }
+
             orderSpawnTimes.Remove(removedOrder.instanceId);
-            
+
             // Calculate points
             int points = CalculatePoints(order);
             
             // Update score
             if (ScoreManager.Instance != null)
             {
-                ScoreManager.Instance.CompleteOrder(order.orderType == OrderType.Express, points);
+                ScoreManager.Instance.CompleteOrder(order.orderType == OrderType.Express, points, completionTime);
             }
             
             Debug.Log($"OrderManager: Completed order {order.orderId} for {points} points");

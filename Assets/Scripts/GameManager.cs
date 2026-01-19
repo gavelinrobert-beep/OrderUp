@@ -47,7 +47,10 @@ namespace OrderUp.Core
         {
             // Auto-start round for MVP testing
             // TODO: Remove auto-start and trigger from lobby/menu system
-            StartRound();
+            if (Application.isPlaying)
+            {
+                StartRound();
+            }
         }
         
         private void Update()

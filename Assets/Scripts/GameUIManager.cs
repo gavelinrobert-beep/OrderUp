@@ -16,6 +16,7 @@ namespace OrderUp.UI
         [Header("UI References")]
         [SerializeField] private TextMeshProUGUI timerText;
         [SerializeField] private TextMeshProUGUI scoreText;
+        [SerializeField] private TextMeshProUGUI roundText;
         [SerializeField] private Transform orderListContainer;
         [SerializeField] private GameObject orderItemPrefab; // TODO: Create order item prefab
 
@@ -45,6 +46,11 @@ namespace OrderUp.UI
             {
                 ScoreManager.Instance.OnScoreChanged += UpdateScore;
             }
+
+            if (GameStateManager.Instance != null)
+            {
+                GameStateManager.Instance.OnRoundChanged += UpdateRound;
+            }
             
             if (OrderManager.Instance != null)
             {
@@ -58,6 +64,7 @@ namespace OrderUp.UI
             
             // Initialize UI
             UpdateScore(0);
+            UpdateRound(GameStateManager.Instance != null ? GameStateManager.Instance.CurrentRound : 0);
             if (roundSummaryPanel != null)
             {
                 roundSummaryPanel.SetActive(false);
@@ -76,6 +83,11 @@ namespace OrderUp.UI
             if (ScoreManager.Instance != null)
             {
                 ScoreManager.Instance.OnScoreChanged -= UpdateScore;
+            }
+
+            if (GameStateManager.Instance != null)
+            {
+                GameStateManager.Instance.OnRoundChanged -= UpdateRound;
             }
             
             if (OrderManager.Instance != null)
@@ -121,6 +133,14 @@ namespace OrderUp.UI
             if (scoreText != null)
             {
                 scoreText.text = $"Score: {score}";
+            }
+        }
+
+        private void UpdateRound(int round)
+        {
+            if (roundText != null)
+            {
+                roundText.text = $"Round: {round}";
             }
         }
         

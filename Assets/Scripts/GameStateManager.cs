@@ -59,7 +59,7 @@ namespace OrderUp.Core
         }
 
         /// <summary>
-        /// Resets tracked state so the next round starts at round 1.
+        /// Resets tracked state so the next StartRound increments from 0 to round 1.
         /// </summary>
         public void ResetState()
         {
@@ -73,7 +73,7 @@ namespace OrderUp.Core
             if (GameManager.Instance != null && !isGameManagerSubscribed)
             {
                 GameManager.Instance.OnRoundStart += HandleRoundStart;
-                GameManager.Instance.OnRoundEnd += HandleRoundEnd;
+                GameManager.Instance.OnRoundEnd += HandleRoundSummary;
                 GameManager.Instance.OnRoundSummary += HandleRoundSummary;
                 GameManager.Instance.OnPause += HandlePause;
                 GameManager.Instance.OnResume += HandleResume;
@@ -94,7 +94,7 @@ namespace OrderUp.Core
             if (GameManager.Instance != null && isGameManagerSubscribed)
             {
                 GameManager.Instance.OnRoundStart -= HandleRoundStart;
-                GameManager.Instance.OnRoundEnd -= HandleRoundEnd;
+                GameManager.Instance.OnRoundEnd -= HandleRoundSummary;
                 GameManager.Instance.OnRoundSummary -= HandleRoundSummary;
                 GameManager.Instance.OnPause -= HandlePause;
                 GameManager.Instance.OnResume -= HandleResume;
@@ -114,11 +114,6 @@ namespace OrderUp.Core
             currentRound++;
             SetState(GameState.InRound);
             OnRoundChanged?.Invoke(currentRound);
-        }
-
-        private void HandleRoundEnd()
-        {
-            HandleRoundSummary();
         }
 
         private void HandleRoundSummary()

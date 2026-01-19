@@ -64,7 +64,7 @@ namespace OrderUp.UI
             
             // Initialize UI
             UpdateScore(0);
-            UpdateRound(GameStateManager.Instance != null ? GameStateManager.Instance.CurrentRound : 0);
+            UpdateRound(GameStateManager.Instance?.CurrentRound ?? 0);
             if (roundSummaryPanel != null)
             {
                 roundSummaryPanel.SetActive(false);

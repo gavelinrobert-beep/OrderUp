@@ -67,8 +67,8 @@ namespace OrderUp.UI
             GameManager gameManager = GameManager.Instance;
             GameStateManager stateManager = GameStateManager.Instance;
 
-            int score = scoreManager != null ? scoreManager.CurrentScore : 0;
-            int round = stateManager != null ? stateManager.CurrentRound : 0;
+            int score = scoreManager?.CurrentScore ?? 0;
+            int round = stateManager?.CurrentRound ?? 0;
             string state = GetStateLabel(gameManager, stateManager);
 
             float remainingTime = gameManager != null ? gameManager.RemainingTime : 0f;

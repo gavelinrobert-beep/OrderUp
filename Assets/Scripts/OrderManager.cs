@@ -223,15 +223,21 @@ namespace OrderUp.Core
                 return;
             }
             
+            float? completionTime = null;
+            if (orderSpawnTimes.TryGetValue(removedOrder.instanceId, out float spawnTime))
+            {
+                completionTime = Mathf.Max(0f, Time.time - spawnTime);
+            }
+
             orderSpawnTimes.Remove(removedOrder.instanceId);
-            
+
             // Calculate points
             int points = CalculatePoints(order);
             
             // Update score
             if (ScoreManager.Instance != null)
             {
-                ScoreManager.Instance.CompleteOrder(order.orderType == OrderType.Express, points);
+                ScoreManager.Instance.CompleteOrder(order.orderType == OrderType.Express, points, completionTime);
             }
             
             Debug.Log($"OrderManager: Completed order {order.orderId} for {points} points");

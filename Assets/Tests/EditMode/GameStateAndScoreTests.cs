@@ -71,13 +71,16 @@ namespace OrderUp.Tests
         public void ScoreManager_AddsScoreAndTracksOrders()
         {
             ScoreManager.Instance.ResetScore();
-            ScoreManager.Instance.CompleteOrder(false, 50);
-            ScoreManager.Instance.CompleteOrder(true, 75);
+            ScoreManager.Instance.CompleteOrder(false, 50, 10f);
+            ScoreManager.Instance.CompleteOrder(true, 75, 20f);
+            ScoreManager.Instance.RecordMissedExpressOrder();
 
             Assert.AreEqual(125, ScoreManager.Instance.CurrentScore);
             Assert.AreEqual(2, ScoreManager.Instance.OrdersCompleted);
             Assert.AreEqual(1, ScoreManager.Instance.StandardOrdersCompleted);
             Assert.AreEqual(1, ScoreManager.Instance.ExpressOrdersCompleted);
+            Assert.AreEqual(1, ScoreManager.Instance.MissedExpressOrders);
+            Assert.AreEqual(15f, ScoreManager.Instance.AverageCompletionTime, 0.01f);
         }
     }
 }

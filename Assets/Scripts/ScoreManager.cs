@@ -1,4 +1,5 @@
 using UnityEngine;
+using OrderUp.Data;
 
 namespace OrderUp.Core
 {
@@ -15,6 +16,9 @@ namespace OrderUp.Core
         [SerializeField] private int ordersCompleted = 0;
         [SerializeField] private int standardOrdersCompleted = 0;
         [SerializeField] private int expressOrdersCompleted = 0;
+        [SerializeField] private int missedExpressOrders = 0;
+        [SerializeField] private float totalCompletionTime = 0f;
+        [SerializeField] private int timedOrdersCompleted = 0;
         
         // Events for UI updates
         public event System.Action<int> OnScoreChanged;
@@ -24,6 +28,9 @@ namespace OrderUp.Core
         public int OrdersCompleted => ordersCompleted;
         public int StandardOrdersCompleted => standardOrdersCompleted;
         public int ExpressOrdersCompleted => expressOrdersCompleted;
+        public int MissedExpressOrders => missedExpressOrders;
+        public float AverageCompletionTime => HasCompletionTimeData ? totalCompletionTime / timedOrdersCompleted : 0f;
+        public bool HasCompletionTimeData => timedOrdersCompleted > 0;
         
         private void Awake()
         {
@@ -44,6 +51,11 @@ namespace OrderUp.Core
             {
                 GameManager.Instance.OnRoundStart += ResetScore;
             }
+
+            if (OrderManager.Instance != null)
+            {
+                OrderManager.Instance.OnOrderExpired += HandleOrderExpired;
+            }
         }
         
         private void OnDestroy()
@@ -52,6 +64,11 @@ namespace OrderUp.Core
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.OnRoundStart -= ResetScore;
+            }
+
+            if (OrderManager.Instance != null)
+            {
+                OrderManager.Instance.OnOrderExpired -= HandleOrderExpired;
             }
         }
         
@@ -65,6 +82,9 @@ namespace OrderUp.Core
             ordersCompleted = 0;
             standardOrdersCompleted = 0;
             expressOrdersCompleted = 0;
+            missedExpressOrders = 0;
+            totalCompletionTime = 0f;
+            timedOrdersCompleted = 0;
             
             OnScoreChanged?.Invoke(currentScore);
         }
@@ -86,7 +106,8 @@ namespace OrderUp.Core
         /// </summary>
         /// <param name="isExpress">Whether the order was an express order</param>
         /// <param name="points">Points earned from the order</param>
-        public void CompleteOrder(bool isExpress, int points)
+        /// <param name="completionTime">Time it took to complete the order (in seconds)</param>
+        public void CompleteOrder(bool isExpress, int points, float? completionTime = null)
         {
             ordersCompleted++;
             
@@ -99,11 +120,26 @@ namespace OrderUp.Core
                 standardOrdersCompleted++;
             }
             
+            if (completionTime.HasValue && completionTime.Value >= 0f)
+            {
+                totalCompletionTime += completionTime.Value;
+                timedOrdersCompleted++;
+            }
+
             AddScore(points);
             OnOrderCompleted?.Invoke(ordersCompleted);
             
             Debug.Log($"ScoreManager: Order completed! Total orders: {ordersCompleted} " +
                      $"(Standard: {standardOrdersCompleted}, Express: {expressOrdersCompleted})");
+        }
+
+        /// <summary>
+        /// Records an express order that expired before completion.
+        /// </summary>
+        public void RecordMissedExpressOrder()
+        {
+            missedExpressOrders++;
+            Debug.Log($"ScoreManager: Express order missed. Total missed express: {missedExpressOrders}");
         }
         
         /// <summary>
@@ -112,10 +148,26 @@ namespace OrderUp.Core
         /// </summary>
         public string GetGameSummary()
         {
+            string averageCompletionSummary = HasCompletionTimeData
+                ? $"{AverageCompletionTime:0.0}s"
+                : "N/A";
+
             return $"Final Score: {currentScore}\n" +
                    $"Orders Completed: {ordersCompleted}\n" +
                    $"Standard Orders: {standardOrdersCompleted}\n" +
-                   $"Express Orders: {expressOrdersCompleted}";
+                   $"Express Orders: {expressOrdersCompleted}\n" +
+                   $"Missed Express Orders: {missedExpressOrders}\n" +
+                   $"Average Completion Time: {averageCompletionSummary}";
+        }
+
+        private void HandleOrderExpired(OrderData order)
+        {
+            if (order == null || order.orderType != OrderType.Express)
+            {
+                return;
+            }
+
+            RecordMissedExpressOrder();
         }
     }
 }

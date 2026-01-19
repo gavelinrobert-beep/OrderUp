@@ -58,6 +58,9 @@ namespace OrderUp.Core
             UnsubscribeFromManagers();
         }
 
+        /// <summary>
+        /// Resets tracked state so the next round starts at round 1.
+        /// </summary>
         public void ResetState()
         {
             currentRound = 0;
@@ -115,7 +118,7 @@ namespace OrderUp.Core
 
         private void HandleRoundEnd()
         {
-            SetState(GameState.Summary);
+            HandleRoundSummary();
         }
 
         private void HandleRoundSummary()

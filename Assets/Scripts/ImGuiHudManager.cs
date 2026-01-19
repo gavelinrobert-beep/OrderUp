@@ -8,7 +8,7 @@ namespace OrderUp.UI
     /// </summary>
     public class ImGuiHudManager : MonoBehaviour
     {
-        private const int HudWindowIdBase = 9000;
+        private const int HudWindowIdBase = 9000; // Start high to avoid IMGUI control ID collisions.
         private static int nextWindowId = HudWindowIdBase;
 
         [Header("HUD Window")]
@@ -69,11 +69,7 @@ namespace OrderUp.UI
 
             int score = scoreManager != null ? scoreManager.CurrentScore : 0;
             int round = stateManager != null ? stateManager.CurrentRound : 0;
-            string state = stateManager != null
-                ? stateManager.CurrentState.ToString()
-                : gameManager != null && gameManager.IsRoundActive
-                    ? GameStateManager.GameState.InRound.ToString()
-                    : GameStateManager.GameState.WaitingForRound.ToString();
+            string state = GetStateLabel(gameManager, stateManager);
 
             float remainingTime = gameManager != null ? gameManager.RemainingTime : 0f;
 
@@ -102,6 +98,21 @@ namespace OrderUp.UI
             summaryText = ScoreManager.Instance != null
                 ? ScoreManager.Instance.GetGameSummary()
                 : "No score summary available.";
+        }
+
+        private static string GetStateLabel(GameManager gameManager, GameStateManager stateManager)
+        {
+            if (stateManager != null)
+            {
+                return stateManager.CurrentState.ToString();
+            }
+
+            if (gameManager != null && gameManager.IsRoundActive)
+            {
+                return GameStateManager.GameState.InRound.ToString();
+            }
+
+            return GameStateManager.GameState.WaitingForRound.ToString();
         }
 
         private static string FormatTime(float seconds)

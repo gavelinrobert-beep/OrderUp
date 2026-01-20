@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.mirror-networking.mirror": "https://github.com/MirrorNetworking/Mirror.git?path=/Assets/Mirror#v88.6.0",
+    "com.mirror-networking.mirror": "https://github.com/MirrorNetworking/Mirror.git?path=/Assets/Mirror#v96.9.9",
     "com.unity.collab-proxy": "2.0.5",
     "com.unity.feature.development": "1.0.1",
     "com.unity.textmeshpro": "3.0.6",

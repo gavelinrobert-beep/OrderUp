@@ -21,7 +21,7 @@ namespace OrderUp.Audio
         [SerializeField] private AudioClip itemDropSFX;
         [SerializeField] private AudioClip cartInteractionSFX;
         [SerializeField] private AudioClip orderCompleteSFX;
-        [SerializeField] private AudioClip expressWarningS FX;
+        [SerializeField] private AudioClip expressWarningSFX;
         [SerializeField] private AudioClip timerWarningSFX;
         [SerializeField] private AudioClip uiClickSFX;
 

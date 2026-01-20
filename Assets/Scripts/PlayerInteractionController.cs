@@ -2,6 +2,7 @@ using UnityEngine;
 using Mirror;
 using OrderUp.Data;
 using OrderUp.Gameplay;
+using OrderUp.Audio;
 
 namespace OrderUp.Player
 {
@@ -106,6 +107,13 @@ namespace OrderUp.Player
                     {
                         heldItem = item;
                         Debug.Log($"PlayerInteraction: Picked up {item.ProductData?.productName ?? "item"}");
+                        
+                        // Play audio and visual feedback
+                        if (AudioManager.Instance != null)
+                            AudioManager.Instance.PlayItemPickup();
+                        if (VisualFeedbackManager.Instance != null)
+                            VisualFeedbackManager.Instance.ShowItemPickup(item.transform.position);
+                        
                         return;
                     }
                 }
@@ -121,6 +129,10 @@ namespace OrderUp.Player
                         {
                             heldItem = null;
                             Debug.Log("PlayerInteraction: Added item to cart");
+                            
+                            // Play audio feedback
+                            if (AudioManager.Instance != null)
+                                AudioManager.Instance.PlayCartInteraction();
                         }
                         return;
                     }
@@ -129,6 +141,11 @@ namespace OrderUp.Player
                         // Start using cart
                         currentCart = cart;
                         Debug.Log("PlayerInteraction: Started using cart");
+                        
+                        // Play audio feedback
+                        if (AudioManager.Instance != null)
+                            AudioManager.Instance.PlayCartInteraction();
+                        
                         return;
                     }
                 }
@@ -169,6 +186,10 @@ namespace OrderUp.Player
                             if (currentStation.TryPackItem(item))
                             {
                                 Debug.Log($"PlayerInteraction: Packed {item.ProductData?.productName ?? "item"}");
+                                
+                                // Play audio feedback
+                                if (AudioManager.Instance != null)
+                                    AudioManager.Instance.PlayItemPickup();
                             }
                         }
                         return;
@@ -188,6 +209,10 @@ namespace OrderUp.Player
                     heldItem.transform.SetParent(null);
                     heldItem = null;
                     Debug.Log("PlayerInteraction: Dropped item");
+                    
+                    // Play audio feedback
+                    if (AudioManager.Instance != null)
+                        AudioManager.Instance.PlayItemDrop();
                 }
                 // Stop using cart
                 else if (currentCart != null)
@@ -231,6 +256,12 @@ namespace OrderUp.Player
                             if (currentStation.TryCompleteOrder())
                             {
                                 Debug.Log($"PlayerInteraction: Completed order {orderToComplete.orderId}");
+                                
+                                // Play audio and visual feedback
+                                if (AudioManager.Instance != null)
+                                    AudioManager.Instance.PlayOrderComplete();
+                                if (VisualFeedbackManager.Instance != null)
+                                    VisualFeedbackManager.Instance.ShowOrderComplete(currentStation.transform.position);
                             }
                         }
                     }

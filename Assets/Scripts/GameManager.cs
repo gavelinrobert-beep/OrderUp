@@ -1,4 +1,5 @@
 using UnityEngine;
+using OrderUp.Audio;
 
 namespace OrderUp.Core
 {
@@ -18,6 +19,11 @@ namespace OrderUp.Core
         [SerializeField] private bool isRoundActive = false;
         [SerializeField] private bool isPaused = false;
         [SerializeField] private float remainingTime = 0f;
+        
+        // Timer warning flags
+        private bool twoMinuteWarningPlayed = false;
+        private bool oneMinuteWarningPlayed = false;
+        private bool thirtySecondWarningPlayed = false;
         
         // Events for other systems to subscribe to
         public event System.Action OnRoundStart;
@@ -72,6 +78,11 @@ namespace OrderUp.Core
             remainingTime = roundDuration;
             Time.timeScale = 1f;
             
+            // Reset warning flags
+            twoMinuteWarningPlayed = false;
+            oneMinuteWarningPlayed = false;
+            thirtySecondWarningPlayed = false;
+            
             OnRoundStart?.Invoke();
         }
         
@@ -100,6 +111,26 @@ namespace OrderUp.Core
             remainingTime -= Time.deltaTime;
             
             OnTimerUpdate?.Invoke(remainingTime);
+            
+            // Play timer warnings
+            if (remainingTime <= 120f && !twoMinuteWarningPlayed)
+            {
+                twoMinuteWarningPlayed = true;
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlayTimerWarning();
+            }
+            else if (remainingTime <= 60f && !oneMinuteWarningPlayed)
+            {
+                oneMinuteWarningPlayed = true;
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlayTimerWarning();
+            }
+            else if (remainingTime <= 30f && !thirtySecondWarningPlayed)
+            {
+                thirtySecondWarningPlayed = true;
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlayTimerWarning();
+            }
             
             if (remainingTime <= 0f)
             {

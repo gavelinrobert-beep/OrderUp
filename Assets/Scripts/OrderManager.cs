@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using OrderUp.Data;
+using OrderUp.Audio;
 
 namespace OrderUp.Core
 {
@@ -36,6 +37,7 @@ namespace OrderUp.Core
         private int nextOrderInstanceId = 0;
         private readonly Dictionary<int, float> orderSpawnTimes = new Dictionary<int, float>();
         private readonly List<int> expiredOrderInstanceIds = new List<int>();
+        private readonly HashSet<int> warningPlayedOrders = new HashSet<int>();
         
         // Events for UI and other systems
         public event System.Action<OrderData> OnOrderSpawned;
@@ -105,6 +107,7 @@ namespace OrderUp.Core
             timeSinceLastSpawn = 0f;
             nextOrderInstanceId = 0;
             orderSpawnTimes.Clear();
+            warningPlayedOrders.Clear();
             
             // Spawn initial orders
             SpawnInitialOrders();
@@ -307,6 +310,18 @@ namespace OrderUp.Core
                     continue;
                 }
 
+                float timeRemaining = activeOrder.orderData.expressTimeLimit - (Time.time - spawnTime);
+                
+                // Play warning sound at 10 seconds remaining
+                if (timeRemaining <= 10f && timeRemaining > 0f && !warningPlayedOrders.Contains(activeOrder.instanceId))
+                {
+                    warningPlayedOrders.Add(activeOrder.instanceId);
+                    if (AudioManager.Instance != null)
+                    {
+                        AudioManager.Instance.PlayExpressWarning();
+                    }
+                }
+
                 if (Time.time - spawnTime >= activeOrder.orderData.expressTimeLimit)
                 {
                     expiredOrderInstanceIds.Add(activeOrder.instanceId);
@@ -315,6 +330,7 @@ namespace OrderUp.Core
 
             foreach (int instanceId in expiredOrderInstanceIds)
             {
+                warningPlayedOrders.Remove(instanceId);
                 ExpireOrderInstance(instanceId);
             }
         }

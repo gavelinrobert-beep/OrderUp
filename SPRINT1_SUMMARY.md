@@ -4,7 +4,7 @@
 
 ### 1. Mirror Networking Integration
 **Files:**
-- `Packages/manifest.json` - Added Mirror v96.9.9 dependency
+- `Packages/manifest.json` - Added Mirror dependency (upm branch)
 - `Assets/Scripts/OrderUpNetworkManager.cs` - Custom NetworkManager
 - `Assets/Scripts/NetworkUI.cs` - Host/Join UI interface
 

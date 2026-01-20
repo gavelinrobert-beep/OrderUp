@@ -143,8 +143,8 @@ namespace OrderUp.Core
         }
         
         /// <summary>
-        /// Gets a summary of the current game statistics
-        /// TODO: Expand with more detailed statistics
+        /// Gets a comprehensive summary of the current game statistics.
+        /// Includes score, order completions by type, missed orders, and average completion time.
         /// </summary>
         public string GetGameSummary()
         {

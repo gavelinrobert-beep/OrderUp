@@ -52,7 +52,7 @@ namespace OrderUp.Core
         private void Start()
         {
             // Auto-start round for MVP testing
-            // TODO: Remove auto-start and trigger from lobby/menu system
+            // In production, this would be triggered from the main menu
             if (Application.isPlaying)
             {
                 StartRound();
@@ -100,7 +100,7 @@ namespace OrderUp.Core
             OnRoundEnd?.Invoke();
             OnRoundSummary?.Invoke();
             
-            // TODO: Calculate final scores and statistics
+            // Calculate final scores and statistics (handled by ScoreManager)
         }
         
         /// <summary>

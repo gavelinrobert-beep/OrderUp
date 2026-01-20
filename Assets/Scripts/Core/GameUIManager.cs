@@ -19,7 +19,7 @@ namespace OrderUp.UI
         [SerializeField] private TextMeshProUGUI scoreText;
         [SerializeField] private TextMeshProUGUI roundText;
         [SerializeField] private Transform orderListContainer;
-        [SerializeField] private GameObject orderItemPrefab; // TODO: Create order item prefab
+        [SerializeField] private GameObject orderItemPrefab; // Order item prefab for UI display
 
         [Header("Order Completion Feedback")]
         [SerializeField] private float orderCompletionDelay = 1.25f;
@@ -146,8 +146,8 @@ namespace OrderUp.UI
         }
         
         /// <summary>
-        /// Called when a new order is spawned
-        /// TODO: Create visual representation of order in the order list
+        /// Called when a new order is spawned.
+        /// Creates visual representation of order in the order list.
         /// </summary>
         private void OnOrderSpawned(OrderData order)
         {
@@ -168,8 +168,8 @@ namespace OrderUp.UI
         }
         
         /// <summary>
-        /// Called when an order is completed
-        /// TODO: Add visual feedback for order completion
+        /// Called when an order is completed.
+        /// Provides visual feedback including color changes and delayed removal.
         /// </summary>
         private void OnOrderCompleted(OrderData order)
         {
@@ -219,8 +219,8 @@ namespace OrderUp.UI
         }
         
         /// <summary>
-        /// Button callback to restart the round
-        /// TODO: Connect to button in UI
+        /// Button callback to restart the round.
+        /// Resets state and starts a new round.
         /// </summary>
         public void OnRestartButtonClicked()
         {
@@ -241,13 +241,13 @@ namespace OrderUp.UI
         }
         
         /// <summary>
-        /// Button callback to return to main menu
-        /// TODO: Implement main menu scene transition
+        /// Button callback to return to main menu.
+        /// Loads the MainMenu scene.
         /// </summary>
         public void OnMainMenuButtonClicked()
         {
-            Debug.Log("Return to main menu - TODO: Implement scene transition");
-            // TODO: Load main menu scene
+            Debug.Log("Return to main menu - Loading MainMenu scene");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
         }
 
         private void PopulateExistingOrders()

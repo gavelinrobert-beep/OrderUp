@@ -23,8 +23,19 @@ namespace OrderUp.Data
     }
     
     /// <summary>
-    /// ScriptableObject defining an order with required products.
-    /// TODO: Add order complexity variations and special requirements.
+    /// Defines special requirements for handling an order.
+    /// </summary>
+    [System.Flags]
+    public enum SpecialRequirements
+    {
+        None = 0,
+        Fragile = 1 << 0,      // Handle with care
+        Refrigeration = 1 << 1, // Requires cold storage
+        Hazardous = 1 << 2      // Special handling required
+    }
+    
+    /// <summary>
+    /// ScriptableObject defining an order with required products, special requirements, and priority visualization.
     /// </summary>
     [CreateAssetMenu(fileName = "NewOrder", menuName = "OrderUp/Order Data")]
     public class OrderData : ScriptableObject
@@ -61,7 +72,47 @@ namespace OrderUp.Data
         [Tooltip("Time limit for express orders (in seconds)")]
         public float expressTimeLimit = 60f;
         
-        // TODO: Add special requirements (e.g., fragile handling)
-        // TODO: Add order priority visualization data
+        [Header("Special Requirements")]
+        [Tooltip("Special handling requirements for this order")]
+        public SpecialRequirements specialRequirements = SpecialRequirements.None;
+        
+        [Header("Priority Visualization")]
+        [Tooltip("Color used to highlight this order's priority in the UI")]
+        public Color priorityColor = Color.white;
+        
+        [Tooltip("Icon to display for this order's priority level")]
+        public Sprite priorityIcon;
+        
+        [Tooltip("Display order priority as urgency level (1-5, where 5 is most urgent)")]
+        [Range(1, 5)]
+        public int priorityLevel = 1;
+        
+        /// <summary>
+        /// Checks if this order has a specific special requirement.
+        /// </summary>
+        public bool HasRequirement(SpecialRequirements requirement)
+        {
+            return (specialRequirements & requirement) != 0;
+        }
+        
+        /// <summary>
+        /// Returns a formatted string of all special requirements.
+        /// </summary>
+        public string GetRequirementsDescription()
+        {
+            if (specialRequirements == SpecialRequirements.None)
+                return "No special requirements";
+                
+            System.Collections.Generic.List<string> requirements = new System.Collections.Generic.List<string>();
+            
+            if (HasRequirement(SpecialRequirements.Fragile))
+                requirements.Add("Fragile");
+            if (HasRequirement(SpecialRequirements.Refrigeration))
+                requirements.Add("Refrigeration Required");
+            if (HasRequirement(SpecialRequirements.Hazardous))
+                requirements.Add("Hazardous Material");
+                
+            return string.Join(", ", requirements);
+        }
     }
 }

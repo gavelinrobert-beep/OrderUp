@@ -14,8 +14,19 @@ namespace OrderUp.Data
     }
 
     /// <summary>
+    /// Defines product rarity level affecting spawn rates and availability.
+    /// </summary>
+    public enum ProductRarity
+    {
+        Common,      // Frequently available
+        Uncommon,    // Moderately available
+        Rare,        // Occasionally available
+        VeryRare     // Rarely available
+    }
+    
+    /// <summary>
     /// ScriptableObject defining a product that can be picked and packed.
-    /// Includes references for UI icon and world prefab.
+    /// Includes references for UI icon and world prefab, plus rarity and availability settings.
     /// </summary>
     [CreateAssetMenu(fileName = "NewProduct", menuName = "OrderUp/Product Data")]
     public class ProductData : ScriptableObject
@@ -49,6 +60,59 @@ namespace OrderUp.Data
         [Tooltip("Base points earned when this product is included in a completed order")]
         public int basePoints = 10;
         
-        // TODO: Add rarity or availability settings
+        [Header("Availability")]
+        [Tooltip("Rarity level of this product affecting spawn rates")]
+        public ProductRarity rarity = ProductRarity.Common;
+        
+        [Tooltip("Spawn weight used for random selection (higher = more common)")]
+        [Range(1, 100)]
+        public int spawnWeight = 50;
+        
+        [Tooltip("Is this product currently available for spawning?")]
+        public bool isAvailable = true;
+        
+        /// <summary>
+        /// Gets the rarity multiplier for scoring purposes.
+        /// </summary>
+        public float GetRarityMultiplier()
+        {
+            switch (rarity)
+            {
+                case ProductRarity.Common:
+                    return 1.0f;
+                case ProductRarity.Uncommon:
+                    return 1.5f;
+                case ProductRarity.Rare:
+                    return 2.0f;
+                case ProductRarity.VeryRare:
+                    return 3.0f;
+                default:
+                    return 1.0f;
+            }
+        }
+        
+        /// <summary>
+        /// Calculates the effective spawn rate based on rarity and spawn weight.
+        /// </summary>
+        public float GetEffectiveSpawnRate()
+        {
+            if (!isAvailable) return 0f;
+            
+            float rarityFactor = 1f;
+            switch (rarity)
+            {
+                case ProductRarity.Uncommon:
+                    rarityFactor = 0.7f;
+                    break;
+                case ProductRarity.Rare:
+                    rarityFactor = 0.4f;
+                    break;
+                case ProductRarity.VeryRare:
+                    rarityFactor = 0.2f;
+                    break;
+            }
+            
+            return spawnWeight * rarityFactor;
+        }
     }
 }

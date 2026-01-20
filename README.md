@@ -73,7 +73,7 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
 
 ### Sprint 1: Project Foundation (Week 1-2) ✅ COMPLETED
 - [x] Set up Unity project with Mirror networking
-  - Added Mirror package v88.6.0 via git URL
+  - Added Mirror package v96.9.9 via git URL
   - Created OrderUpNetworkManager for connection handling
   - Configured network transport (KCP, port 7777)
   - Added NetworkUI for host/join interface
@@ -175,8 +175,8 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
 
 ## 🛠️ Technical Stack
 
-- **Engine**: Unity 2022.3 LTS
-- **Networking**: Mirror v88.6.0 (https://mirror-networking.com/) - ✅ Integrated
+- **Engine**: Unity 2022.3 LTS (2022.3.62f3)
+- **Networking**: Mirror v96.9.9 (https://mirror-networking.com/) - ✅ Integrated
 - **Language**: C#
 - **Version Control**: Git/GitHub
 - **Target Platform**: PC (Windows, Mac, Linux)
@@ -187,7 +187,7 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
 
 ### Prerequisites
 - Unity Hub (latest version)
-- Unity 2022.3 LTS (2022.3.17f1 or newer)
+- Unity 2022.3 LTS (2022.3.62f3 or newer)
 - Git
 
 ### Installation & Setup
@@ -300,7 +300,7 @@ For detailed multiplayer setup and troubleshooting, see the [Multiplayer Setup G
 ```
 OrderUp/
 ├── Assets/
-│   ├── Scenes/           # Unity scenes (Main.unity)
+│   ├── Scenes/           # Unity scenes (Main.unity, MainMenu.unity)
 │   ├── Scripts/          # C# gameplay scripts
 │   │   ├── Core/
 │   │   │   ├── GameManager.cs
@@ -309,6 +309,7 @@ OrderUp/
 │   │   │   ├── GameUIManager.cs
 │   │   │   ├── GameStateManager.cs
 │   │   │   ├── ImGuiHudManager.cs
+│   │   │   ├── MainMenuManager.cs
 │   │   │   └── PerformanceOptimizer.cs
 │   │   ├── Audio/
 │   │   │   └── AudioManager.cs
@@ -320,6 +321,7 @@ OrderUp/
 │   │   │   ├── Cart.cs
 │   │   │   ├── Box.cs
 │   │   │   ├── PackingStation.cs
+│   │   │   ├── OrderItemUI.cs
 │   │   │   └── VisualFeedbackManager.cs
 │   │   ├── Networking/
 │   │   │   ├── OrderUpNetworkManager.cs
@@ -349,25 +351,25 @@ OrderUp/
 
 ### Extending the MVP
 
-The codebase includes TODO comments marking areas for future development:
+The codebase provides a solid foundation for future development:
 
-**ScriptableObjects (Data Layer)**
-- Add product icons/sprites
-- Add 3D prefab references for products
-- Add customer info to orders
-- Implement order difficulty levels
+**Enhanced Data Systems**
+- Product rarity levels (Common, Uncommon, Rare, VeryRare) with spawn rate modifiers
+- Order special requirements (Fragile, Refrigeration, Hazardous)
+- Priority visualization with colors, icons, and urgency levels
+- Extensible for more complex game mechanics
 
-**Game Managers**
-- Implement pause/resume functionality
-- Add round summary UI
-- Implement express order timing and expiration
-- Add order validation logic
+**Audio & Visual Feedback**
+- Comprehensive audio system with pooling for efficient playback
+- Visual feedback manager for particle effects and highlights
+- Easy to add new sounds and effects through Inspector
+- Ready for asset integration (sound files, particle prefabs)
 
-**UI System**
-- Create order list item prefabs
-- Add visual feedback for order completion
-- Implement round summary screen
-- Add main menu and scene transitions
+**Performance Optimization**
+- Object pooling system to reduce garbage collection
+- Configurable FPS targeting (60 FPS default)
+- VSync control for consistent performance
+- Statistics tracking for monitoring and debugging
 
 **Gameplay Mechanics**
 - ✅ Player movement and controls (Sprint 1)

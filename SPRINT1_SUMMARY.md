@@ -4,7 +4,7 @@
 
 ### 1. Mirror Networking Integration
 **Files:**
-- `Packages/manifest.json` - Added Mirror v88.6.0 dependency
+- `Packages/manifest.json` - Added Mirror v96.9.9 dependency
 - `Assets/Scripts/OrderUpNetworkManager.cs` - Custom NetworkManager
 - `Assets/Scripts/NetworkUI.cs` - Host/Join UI interface
 
@@ -48,7 +48,7 @@
 ## 🎮 How to Use
 
 ### Quick Start
-1. Open project in Unity 2022.3 LTS
+1. Open project in Unity 2022.3 LTS (2022.3.62f3 or newer)
 2. Open `Assets/Scenes/Main.unity`
 3. Follow setup in `SCENE_SETUP.md` to configure scene
 4. Press Play and click "Host Game"

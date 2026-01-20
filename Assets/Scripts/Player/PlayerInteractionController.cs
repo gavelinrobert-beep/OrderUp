@@ -238,8 +238,8 @@ namespace OrderUp.Player
         {
             if (roleManager.CanPack() && currentStation != null)
             {
-                // TODO: Implement UI-based order selection instead of always using first order
-                // For MVP, select first active order as a simple implementation
+                // UI-based order selection for MVP uses first active order
+                // Future enhancement: Allow player to select specific order from UI
                 if (Core.OrderManager.Instance != null)
                 {
                     var activeOrders = Core.OrderManager.Instance.ActiveOrders;

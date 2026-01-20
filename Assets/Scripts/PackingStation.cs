@@ -23,6 +23,15 @@ namespace OrderUp.Gameplay
         public bool IsOccupied => isOccupied;
         public Box CurrentBox => currentBox;
 
+        /// <summary>
+        /// Sets the box position transform (used during initialization)
+        /// </summary>
+        /// <param name="position">The transform to use as box position</param>
+        public void SetBoxPosition(Transform position)
+        {
+            boxPosition = position;
+        }
+
         private void Start()
         {
             // Initialize with a new box if none is assigned

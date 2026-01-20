@@ -19,6 +19,19 @@ namespace OrderUp.Gameplay
         public bool IsPicked => isPicked;
 
         /// <summary>
+        /// Sets the product data for this item (used during spawning)
+        /// </summary>
+        /// <param name="product">The product data to assign</param>
+        public void SetProductData(ProductData product)
+        {
+            productData = product;
+            if (product != null && !string.IsNullOrEmpty(product.productName))
+            {
+                gameObject.name = $"Item_{product.productName}";
+            }
+        }
+
+        /// <summary>
         /// Attempts to pick this item
         /// </summary>
         /// <returns>True if item was successfully picked</returns>

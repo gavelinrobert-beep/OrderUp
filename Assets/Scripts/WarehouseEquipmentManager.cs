@@ -217,13 +217,8 @@ namespace OrderUp.Environment
                 boxPosition = boxPosObj.transform;
             }
 
-            // Set box position using reflection
-            var field = typeof(PackingStation).GetField("boxPosition", 
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            if (field != null)
-            {
-                field.SetValue(stationComponent, boxPosition);
-            }
+            // Set box position using the public setter
+            stationComponent.SetBoxPosition(boxPosition);
 
             return station;
         }

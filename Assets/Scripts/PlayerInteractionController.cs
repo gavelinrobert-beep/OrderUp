@@ -213,7 +213,8 @@ namespace OrderUp.Player
         {
             if (roleManager.CanPack() && currentStation != null)
             {
-                // Select an order to complete (for now, just get first active order)
+                // TODO: Implement UI-based order selection instead of always using first order
+                // For MVP, select first active order as a simple implementation
                 if (Core.OrderManager.Instance != null)
                 {
                     var activeOrders = Core.OrderManager.Instance.ActiveOrders;

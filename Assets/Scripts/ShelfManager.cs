@@ -180,13 +180,8 @@ namespace OrderUp.Environment
                 pickableItem = itemObj.AddComponent<PickableItem>();
             }
 
-            // Set product data using reflection since it's a serialized field
-            var field = typeof(PickableItem).GetField("productData", 
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            if (field != null)
-            {
-                field.SetValue(pickableItem, product);
-            }
+            // Set product data using the public setter
+            pickableItem.SetProductData(product);
 
             return itemObj;
         }

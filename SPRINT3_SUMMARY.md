@@ -291,9 +291,8 @@ Dynamic order list displays all active orders with real-time updates.
    - Options to restart or return to menu
 
 ### UI Layout:
-- **Top Left**: Score display
+- **Top Left**: Score display and round counter
 - **Top Center**: Round timer (color-coded)
-- **Top Left**: Round counter
 - **Right Side**: Order board with active orders
 - **Center**: Round summary panel (when active)
 

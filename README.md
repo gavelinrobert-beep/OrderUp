@@ -68,11 +68,28 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
 
 ## 📅 Sprint Plan
 
-### Sprint 1: Project Foundation (Week 1-2)
-- [ ] Set up Unity project with Mirror networking
-- [ ] Create basic warehouse environment
-- [ ] Implement player movement and controls
-- [ ] Set up multiplayer connection system
+### Sprint 1: Project Foundation (Week 1-2) ✅ COMPLETED
+- [x] Set up Unity project with Mirror networking
+  - Added Mirror package v88.6.0 via git URL
+  - Created OrderUpNetworkManager for connection handling
+  - Configured network transport (KCP, port 7777)
+  - Added NetworkUI for host/join interface
+- [x] Create basic warehouse environment
+  - Created WarehouseBuilder script for procedural environment generation
+  - Implemented floor, walls, picking zone, and packing zone
+  - Added basic lighting setup
+  - Configurable warehouse dimensions (20x30 units default)
+- [x] Implement player movement and controls
+  - Created PlayerController with CharacterController-based movement
+  - Implemented WASD/Arrow key controls
+  - Added smooth rotation towards movement direction
+  - Integrated gravity and ground detection
+- [x] Set up multiplayer connection system
+  - Configured NetworkIdentity and NetworkTransform for players
+  - Implemented player spawning for up to 4 players
+  - Created CameraFollow system for local player
+  - Added connection/disconnection handling
+  - Created MULTIPLAYER.md guide for setup instructions
 
 ### Sprint 2: Core Mechanics (Week 3-4)
 - [ ] Implement Picker role mechanics (pick items, use cart)
@@ -96,7 +113,7 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
 ## 🛠️ Technical Stack
 
 - **Engine**: Unity 2022.3 LTS
-- **Networking**: Mirror (https://mirror-networking.com/) - To be integrated
+- **Networking**: Mirror v88.6.0 (https://mirror-networking.com/) - ✅ Integrated
 - **Language**: C#
 - **Version Control**: Git/GitHub
 - **Target Platform**: PC (Windows, Mac, Linux)
@@ -171,7 +188,15 @@ All managers log their activity to Unity's Console window. Open the Console (Win
 4. Click **Build** or **Build and Run**
 5. Choose an output folder and wait for the build to complete
 
-**Note**: Multiplayer networking with Mirror is not yet integrated. The current MVP focuses on the single-player game loop foundation.
+**Note**: Multiplayer networking with Mirror is now integrated! See [MULTIPLAYER.md](MULTIPLAYER.md) for setup instructions and testing guide.
+
+#### Testing Multiplayer
+1. Press Play in Unity Editor and click "Host Game"
+2. Build the game (File > Build and Run)
+3. In the built game, click "Join Game"
+4. Both players will spawn in the warehouse and can move around with WASD
+
+For detailed multiplayer setup and troubleshooting, see the [Multiplayer Setup Guide](MULTIPLAYER.md).
 
 ### Project Structure
 
@@ -180,21 +205,35 @@ OrderUp/
 ├── Assets/
 │   ├── Scenes/           # Unity scenes (Main.unity)
 │   ├── Scripts/          # C# gameplay scripts
-│   │   ├── GameManager.cs
-│   │   ├── ScoreManager.cs
-│   │   ├── OrderManager.cs
-│   │   ├── GameUIManager.cs
-│   │   ├── ProductData.cs
-│   │   └── OrderData.cs
-│   ├── Prefabs/          # Reusable game objects (to be populated)
+│   │   ├── Core/
+│   │   │   ├── GameManager.cs
+│   │   │   ├── ScoreManager.cs
+│   │   │   ├── OrderManager.cs
+│   │   │   ├── GameUIManager.cs
+│   │   │   ├── GameStateManager.cs
+│   │   │   └── ImGuiHudManager.cs
+│   │   ├── Data/
+│   │   │   ├── ProductData.cs
+│   │   │   └── OrderData.cs
+│   │   ├── Networking/
+│   │   │   ├── OrderUpNetworkManager.cs
+│   │   │   └── NetworkUI.cs
+│   │   ├── Player/
+│   │   │   ├── PlayerController.cs
+│   │   │   └── CameraFollow.cs
+│   │   └── Environment/
+│   │       └── WarehouseBuilder.cs
+│   ├── Prefabs/          # Reusable game objects
+│   │   └── Player.prefab # Network player prefab
 │   ├── ScriptableObjects/ # Data assets
 │   │   ├── Products/     # Product definitions
 │   │   └── Orders/       # Order definitions
-│   ├── UI/               # UI assets (to be populated)
+│   ├── UI/               # UI assets
 │   ├── Audio/            # Sound effects and music (to be populated)
 │   └── Art/              # Visual assets (to be populated)
 ├── ProjectSettings/      # Unity project configuration
-├── Packages/             # Unity package dependencies
+├── Packages/             # Unity package dependencies (includes Mirror)
+├── MULTIPLAYER.md        # Multiplayer setup guide
 └── README.md
 ```
 
@@ -220,12 +259,12 @@ The codebase includes TODO comments marking areas for future development:
 - Implement round summary screen
 - Add main menu and scene transitions
 
-**Gameplay Mechanics (Future)**
-- Player movement and controls
-- Picker/Packer role mechanics
-- Warehouse environment
-- Cart and item interaction systems
-- Mirror networking integration
+**Gameplay Mechanics**
+- ✅ Player movement and controls (Sprint 1)
+- ✅ Warehouse environment (Sprint 1)
+- ✅ Mirror networking integration (Sprint 1)
+- Picker/Packer role mechanics (Sprint 2)
+- Cart and item interaction systems (Sprint 2)
 
 ## 🤝 Contributing
 

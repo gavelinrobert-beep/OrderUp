@@ -73,7 +73,7 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
 
 ### Sprint 1: Project Foundation (Week 1-2) ✅ COMPLETED
 - [x] Set up Unity project with Mirror networking
-  - Added Mirror package v96.9.9 via git URL
+  - Added Mirror package via git URL (upm branch)
   - Created OrderUpNetworkManager for connection handling
   - Configured network transport (KCP, port 7777)
   - Added NetworkUI for host/join interface
@@ -176,7 +176,7 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
 ## 🛠️ Technical Stack
 
 - **Engine**: Unity 2022.3 LTS (2022.3.62f3)
-- **Networking**: Mirror v96.9.9 (https://mirror-networking.com/) - ✅ Integrated
+- **Networking**: Mirror (upm branch) (https://mirror-networking.com/) - ✅ Integrated
 - **Language**: C#
 - **Version Control**: Git/GitHub
 - **Target Platform**: PC (Windows, Mac, Linux)

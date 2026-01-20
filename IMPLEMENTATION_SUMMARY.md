@@ -8,7 +8,7 @@ This document summarizes the comprehensive updates made to complete the OrderUp 
 ### 1. ✅ Fixed Critical Build Issues
 **Problem:** Mirror v88.6.0 (invalid version) and Unity 2022.3.17f1 were blocking Unity from opening
 **Solution:**
-- Updated `Packages/manifest.json`: Mirror v88.6.0 → v96.9.9 (valid version)
+- Updated `Packages/manifest.json`: Mirror v88.6.0 → upm branch (stable branch)
 - Updated `ProjectSettings/ProjectVersion.txt`: Unity 2022.3.17f1 → 2022.3.62f3
 - Updated all documentation to reflect correct versions
 
@@ -100,13 +100,13 @@ This document summarizes the comprehensive updates made to complete the OrderUp 
 ### 6. ✅ Documentation Updates
 **README.md:**
 - Updated Unity version reference to 2022.3.62f3
-- Updated Mirror version reference to v96.9.9
+- Updated Mirror version reference to upm branch
 - Updated project structure to include all new folders and MainMenu scene
 - Updated "Extending the MVP" section to highlight enhanced data systems
 - All Sprint 4 features marked as ✅ COMPLETED
 
 **SPRINT1_SUMMARY.md:**
-- Updated Mirror version reference to v96.9.9
+- Updated Mirror version reference to upm branch
 - Updated Unity version reference to 2022.3.62f3
 
 ## Verification Status
@@ -158,7 +158,7 @@ grep -r "TODO" --include="*.cs" Assets/Scripts/
 ## Integration Summary
 
 ### Sprint 1 (Foundation) Integration
-- Mirror v96.9.9 properly configured ✅
+- Mirror (upm branch) properly configured ✅
 - Unity 2022.3.62f3 project version ✅
 - All network systems compatible ✅
 
@@ -183,7 +183,7 @@ grep -r "TODO" --include="*.cs" Assets/Scripts/
 
 ### In Unity Editor:
 1. **Open Project:** Unity Hub → Open → Select OrderUp folder
-2. **Verify Package Import:** Wait for Mirror v96.9.9 to download and import
+2. **Verify Package Import:** Wait for Mirror (upm branch) to download and import
 3. **Test Main Menu:**
    - Open `Assets/Scenes/MainMenu.unity`
    - Add UI Canvas with buttons if needed

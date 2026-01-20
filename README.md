@@ -91,11 +91,29 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
   - Added connection/disconnection handling
   - Created MULTIPLAYER.md guide for setup instructions
 
-### Sprint 2: Core Mechanics (Week 3-4)
-- [ ] Implement Picker role mechanics (pick items, use cart)
-- [ ] Implement Packer role mechanics (pack boxes, apply labels)
-- [ ] Create order generation system
-- [ ] Implement Standard and Express order types
+### Sprint 2: Core Mechanics (Week 3-4) ✅ COMPLETED
+- [x] Implement Picker role mechanics (pick items, use cart)
+  - Created PickableItem component for items on shelves
+  - Implemented Cart system with capacity management
+  - Added PlayerRoleManager for role switching
+  - Integrated picker interactions via PlayerInteractionController
+  - Players can pick items (E key), add to carts, and move carts
+- [x] Implement Packer role mechanics (pack boxes, apply labels)
+  - Created Box component for holding packed items
+  - Implemented PackingStation for packing operations
+  - Added packer interactions via PlayerInteractionController
+  - Players can take items from carts, pack boxes, apply labels (F key)
+  - Integrated order completion and validation
+- [x] Create order generation system
+  - Enhanced OrderManager with order spawning and lifecycle management
+  - Created ShelfManager for spawning pickable items on shelves
+  - Implemented WarehouseEquipmentManager for carts and packing stations
+  - Added automatic shelf restocking capability
+- [x] Implement Standard and Express order types
+  - OrderData supports Standard and Express types
+  - Express orders have time limits and bonus points
+  - ScoreManager tracks completion of both order types
+  - OrderManager handles express order expiration
 
 ### Sprint 3: Game Loop (Week 5-6)
 - [ ] Implement 5-minute round timer
@@ -158,6 +176,27 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
 - **Order Spawning**: Orders automatically spawn every 30 seconds (max 5 active orders)
 - **Game End**: When the timer reaches 0:00, the round ends and stats are logged to console
 
+**Sprint 2 Gameplay Controls:**
+- **R Key**: Toggle between Picker and Packer roles
+- **E Key**: Interact with objects (pick items, use cart, use packing station)
+- **Q Key**: Drop item or cancel current action
+- **F Key**: Complete order (apply label and ship box)
+
+**Picker Role:**
+- Pick items from shelves (press E near items)
+- Add picked items to carts (press E near cart while holding item)
+- Move carts between picking and packing zones
+
+**Packer Role:**
+- Use packing stations (press E near station)
+- Take items from carts (press E near cart while at station)
+- Pack items into boxes
+- Apply labels and complete orders (press F)
+
+**Order Types:**
+- **Standard Orders**: Normal priority with base points
+- **Express Orders**: Time-limited with bonus points (expire if not completed in time)
+
 **UI Elements:**
 - **Timer** (Top Center): Shows remaining time (MM:SS format)
   - White when > 2 minutes remaining
@@ -172,8 +211,10 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
 The MVP includes core manager scripts that coordinate the game loop:
 - **GameManager**: Controls round timer and game state
 - **ScoreManager**: Tracks team score and order completions
-- **OrderManager**: Spawns and manages active orders
+- **OrderManager**: Spawns and manages active orders (Standard and Express types)
 - **GameStateManager**: Tracks round count, state transitions, and exposes score updates
+- **ShelfManager**: Spawns pickable items on warehouse shelves
+- **WarehouseEquipmentManager**: Manages carts and packing stations
 
 All managers log their activity to Unity's Console window. Open the Console (Window > General > Console) to see:
 - Round start/end events
@@ -215,14 +256,23 @@ OrderUp/
 │   │   ├── Data/
 │   │   │   ├── ProductData.cs
 │   │   │   └── OrderData.cs
+│   │   ├── Gameplay/
+│   │   │   ├── PickableItem.cs
+│   │   │   ├── Cart.cs
+│   │   │   ├── Box.cs
+│   │   │   └── PackingStation.cs
 │   │   ├── Networking/
 │   │   │   ├── OrderUpNetworkManager.cs
 │   │   │   └── NetworkUI.cs
 │   │   ├── Player/
 │   │   │   ├── PlayerController.cs
+│   │   │   ├── PlayerRoleManager.cs
+│   │   │   ├── PlayerInteractionController.cs
 │   │   │   └── CameraFollow.cs
 │   │   └── Environment/
-│   │       └── WarehouseBuilder.cs
+│   │       ├── WarehouseBuilder.cs
+│   │       ├── ShelfManager.cs
+│   │       └── WarehouseEquipmentManager.cs
 │   ├── Prefabs/          # Reusable game objects
 │   │   └── Player.prefab # Network player prefab
 │   ├── ScriptableObjects/ # Data assets
@@ -263,8 +313,10 @@ The codebase includes TODO comments marking areas for future development:
 - ✅ Player movement and controls (Sprint 1)
 - ✅ Warehouse environment (Sprint 1)
 - ✅ Mirror networking integration (Sprint 1)
-- Picker/Packer role mechanics (Sprint 2)
-- Cart and item interaction systems (Sprint 2)
+- ✅ Picker/Packer role mechanics (Sprint 2)
+- ✅ Cart and item interaction systems (Sprint 2)
+- ✅ Packing stations and box management (Sprint 2)
+- ✅ Order generation and validation (Sprint 2)
 
 ## 🤝 Contributing
 

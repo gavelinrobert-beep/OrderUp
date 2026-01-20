@@ -1,6 +1,15 @@
 {
+  "scopedRegistries": [
+    {
+      "name": "OpenUPM",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.mirror-networking"
+      ]
+    }
+  ],
   "dependencies": {
-    "com.mirror-networking.mirror": "https://github.com/MirrorNetworking/Mirror.git?path=/Assets/Mirror#upm",
+    "com.mirror-networking.mirror": "96.9.11",
     "com.unity.collab-proxy": "2.0.5",
     "com.unity.feature.development": "1.0.1",
     "com.unity.textmeshpro": "3.0.6",

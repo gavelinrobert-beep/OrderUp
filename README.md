@@ -115,11 +115,33 @@ A party co-op Unity game for 2-4 players where teams work together in a warehous
   - ScoreManager tracks completion of both order types
   - OrderManager handles express order expiration
 
-### Sprint 3: Game Loop (Week 5-6)
-- [ ] Implement 5-minute round timer
-- [ ] Create scoring system
-- [ ] Build round summary screen
-- [ ] Add order board UI
+### Sprint 3: Game Loop (Week 5-6) ✅ COMPLETED
+- [x] Implement 5-minute round timer
+  - GameManager controls 5-minute countdown with real-time updates
+  - Color-coded timer display (white > 2min, yellow > 1min, red < 1min)
+  - Automatic round end at 0:00
+  - Pause/resume functionality
+  - Event-driven UI updates via OnTimerUpdate
+- [x] Create scoring system
+  - Comprehensive ScoreManager tracks team score and statistics
+  - Order completion tracking (Standard vs Express orders)
+  - Missed express order tracking
+  - Average completion time calculation
+  - Point calculation with express bonuses
+  - Event notifications (OnScoreChanged, OnOrderCompleted)
+- [x] Build round summary screen
+  - End-of-round statistics panel via GameUIManager
+  - Displays: final score, orders completed, standard/express counts, missed orders, average time
+  - Restart and main menu buttons
+  - IMGUI debug overlay (ImGuiHudManager) for development
+- [x] Add order board UI
+  - Dynamic order list with OrderItemUI components
+  - Real-time order spawning display
+  - Shows order type (Standard/Express) and required products
+  - Express order countdown timers
+  - Completion visual feedback (green highlight)
+  - Automatic layout management with VerticalLayoutGroup
+  - Expiration handling and removal
 
 ### Sprint 4: Polish & Testing (Week 7-8)
 - [ ] Visual polish and UI improvements

@@ -33,6 +33,15 @@ namespace OrderUp.UI
         private readonly List<OrderItemUI> activeOrderItems = new List<OrderItemUI>();
         private readonly HashSet<OrderItemUI> completingOrderItems = new HashSet<OrderItemUI>();
         private bool hasWarnedMissingPrefab;
+
+        private void OnValidate()
+        {
+            // Validate required prefab references in editor
+            if (orderItemPrefab == null)
+            {
+                Debug.LogWarning("GameUIManager: Order item prefab is not assigned. UI will be created at runtime, but a prefab is recommended.");
+            }
+        }
         
         private void Start()
         {

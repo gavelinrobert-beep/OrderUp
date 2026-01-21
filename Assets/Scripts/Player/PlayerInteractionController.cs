@@ -247,6 +247,13 @@ namespace OrderUp.Player
                     {
                         OrderData orderToComplete = activeOrders[0];
                         
+                        // Verify order is still active before attempting completion
+                        if (!Core.OrderManager.Instance.IsOrderActive(orderToComplete))
+                        {
+                            Debug.LogWarning($"PlayerInteraction: Order {orderToComplete.orderId} is no longer active (may have expired)");
+                            return;
+                        }
+                        
                         // Apply label
                         if (currentStation.TryApplyLabel(orderToComplete))
                         {

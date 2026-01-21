@@ -35,6 +35,19 @@ namespace OrderUp.Environment
         private List<GameObject> spawnedShelves = new List<GameObject>();
         private List<PickableItem> spawnedItems = new List<PickableItem>();
 
+        private void OnValidate()
+        {
+            // Validate prefab references in editor
+            if (shelfPrefab == null)
+            {
+                Debug.LogWarning("ShelfManager: Shelf prefab is not assigned. Shelves will be created at runtime using primitives.");
+            }
+            if (availableProducts == null || availableProducts.Count == 0)
+            {
+                Debug.LogWarning("ShelfManager: No products are assigned. Shelves cannot be populated without product data.");
+            }
+        }
+
         private void Start()
         {
             SpawnShelves();
@@ -61,6 +74,9 @@ namespace OrderUp.Environment
 
                 SpawnItemsOnShelf(shelf.transform, i);
             }
+
+            // Sync physics transforms after runtime positioning to prevent stale collider queries
+            Physics.SyncTransforms();
 
             Debug.Log($"ShelfManager: Spawned {shelfCount} shelves with {itemsPerShelf} items each");
         }
@@ -167,13 +183,20 @@ namespace OrderUp.Environment
                     // Random color for visual variety
                     renderer.material.color = Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f);
                 }
+
+                // Ensure collider is present for pickable items (required for interaction)
+                Collider collider = itemObj.GetComponent<Collider>();
+                if (collider == null)
+                {
+                    collider = itemObj.AddComponent<BoxCollider>();
+                }
             }
 
             itemObj.name = $"Item_{product.productName}";
             itemObj.transform.SetParent(parent);
             itemObj.transform.localPosition = localPosition;
 
-            // Add PickableItem component
+            // Ensure PickableItem component is present (required for picking functionality)
             PickableItem pickableItem = itemObj.GetComponent<PickableItem>();
             if (pickableItem == null)
             {

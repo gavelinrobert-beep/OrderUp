@@ -10,19 +10,29 @@ namespace OrderUp.Networking
     public class NetworkUI : MonoBehaviour
     {
         private NetworkManager networkManager;
+        private bool isDisabled = false;
 
         private void Start()
         {
             networkManager = NetworkManager.singleton;
             if (networkManager == null)
             {
-                Debug.LogError("NetworkUI: NetworkManager not found!");
+                Debug.LogError("NetworkUI: NetworkManager.singleton not found! Disabling NetworkUI to prevent null reference errors.");
+                isDisabled = true;
             }
         }
 
         private void OnGUI()
         {
-            if (networkManager == null) return;
+            // Defensive check: disable if NetworkManager is missing
+            if (isDisabled || networkManager == null)
+            {
+                GUILayout.BeginArea(new Rect(20, 20, 400, 100));
+                GUI.skin.label.fontSize = 16;
+                GUILayout.Label("Network UI disabled: NetworkManager not available");
+                GUILayout.EndArea();
+                return;
+            }
 
             // Set GUI style
             GUI.skin.label.fontSize = 20;

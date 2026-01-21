@@ -19,7 +19,6 @@ namespace OrderUp.Networking
             {
                 Debug.LogError("NetworkUI: NetworkManager.singleton not found! Disabling NetworkUI to prevent null reference errors.");
                 isDisabled = true;
-                enabled = false;
             }
         }
 

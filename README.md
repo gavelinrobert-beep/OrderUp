@@ -388,6 +388,10 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## 🧯 Crash Analysis
+
+See [CRASH_ANALYSIS.md](CRASH_ANALYSIS.md) for the crash root-cause analysis report.
+
 ## 👥 Team
 
 Developed by the Order Up team

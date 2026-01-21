@@ -24,7 +24,7 @@ namespace OrderUp.Core
 
         private void Awake()
         {
-            // Singleton pattern
+            // Singleton pattern - strict guard to prevent duplicates across scene loads
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
@@ -33,7 +33,11 @@ namespace OrderUp.Core
 
             Instance = this;
             DontDestroyOnLoad(gameObject);
+        }
 
+        private void Start()
+        {
+            // Defer initialization to Start() to avoid cross-manager timing issues
             InitializePerformanceSettings();
         }
 

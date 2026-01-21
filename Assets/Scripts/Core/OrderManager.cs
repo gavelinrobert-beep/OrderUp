@@ -179,6 +179,21 @@ namespace OrderUp.Core
         }
         
         /// <summary>
+        /// Checks if an order is currently active.
+        /// </summary>
+        /// <param name="order">The order to check</param>
+        /// <returns>True if the order is in the active orders list</returns>
+        public bool IsOrderActive(OrderData order)
+        {
+            if (order == null)
+            {
+                return false;
+            }
+
+            return TryGetActiveOrder(order, out _);
+        }
+
+        /// <summary>
         /// Validates that the supplied products satisfy the order requirements.
         /// </summary>
         /// <param name="order">The order to validate</param>

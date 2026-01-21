@@ -33,6 +33,19 @@ namespace OrderUp.Environment
         private List<GameObject> spawnedCarts = new List<GameObject>();
         private List<GameObject> spawnedStations = new List<GameObject>();
 
+        private void OnValidate()
+        {
+            // Validate prefab references in editor
+            if (cartPrefab == null)
+            {
+                Debug.LogWarning("WarehouseEquipmentManager: Cart prefab is not assigned. Carts will be created at runtime using primitives.");
+            }
+            if (packingStationPrefab == null)
+            {
+                Debug.LogWarning("WarehouseEquipmentManager: Packing station prefab is not assigned. Stations will be created at runtime using primitives.");
+            }
+        }
+
         private void Start()
         {
             SpawnEquipment();
@@ -60,6 +73,9 @@ namespace OrderUp.Environment
                 spawnedCarts.Add(cart);
             }
 
+            // Sync physics transforms after runtime positioning to prevent stale collider queries
+            Physics.SyncTransforms();
+
             Debug.Log($"WarehouseEquipmentManager: Spawned {cartCount} carts");
         }
 
@@ -74,6 +90,9 @@ namespace OrderUp.Environment
                 GameObject station = CreatePackingStation(position, i);
                 spawnedStations.Add(station);
             }
+
+            // Sync physics transforms after runtime positioning to prevent stale collider queries
+            Physics.SyncTransforms();
 
             Debug.Log($"WarehouseEquipmentManager: Spawned {packingStationCount} packing stations");
         }
@@ -127,13 +146,13 @@ namespace OrderUp.Environment
                     renderer.material.color = new Color(0.7f, 0.7f, 0.7f); // Gray color
                 }
 
-                // Add sphere collider for easier interaction
+                // Add sphere collider for easier interaction (required for cart functionality)
                 SphereCollider collider = cart.AddComponent<SphereCollider>();
                 collider.radius = 1.5f;
                 collider.isTrigger = false;
             }
 
-            // Add Cart component
+            // Ensure Cart component is present (required for cart functionality)
             Cart cartComponent = cart.GetComponent<Cart>();
             if (cartComponent == null)
             {
@@ -193,14 +212,14 @@ namespace OrderUp.Environment
                     }
                 }
 
-                // Add box collider for interaction
+                // Add box collider for interaction (required for station functionality)
                 BoxCollider collider = station.AddComponent<BoxCollider>();
                 collider.center = Vector3.up * 0.75f;
                 collider.size = new Vector3(2f, 1.5f, 2f);
                 collider.isTrigger = false;
             }
 
-            // Add PackingStation component
+            // Ensure PackingStation component is present (required for station functionality)
             PackingStation stationComponent = station.GetComponent<PackingStation>();
             if (stationComponent == null)
             {

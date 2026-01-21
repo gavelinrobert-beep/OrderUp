@@ -119,10 +119,24 @@ namespace OrderUp.Gameplay
                 return false;
             }
 
+            // Check if order is still active to prevent race conditions
+            if (OrderManager.Instance == null)
+            {
+                Debug.LogWarning("PackingStation: OrderManager not available");
+                return false;
+            }
+
+            if (!OrderManager.Instance.IsOrderActive(order))
+            {
+                Debug.LogWarning($"PackingStation: Order {order.orderId} is no longer active (may have expired or already been completed)");
+                // Reset the box since the order is invalid
+                CreateNewBox();
+                return false;
+            }
+
             // Validate the order
             List<ProductData> packedProducts = new List<ProductData>(currentBox.GetProducts());
-            if (OrderManager.Instance != null && 
-                OrderManager.Instance.ValidateOrder(order, packedProducts, out int points))
+            if (OrderManager.Instance.ValidateOrder(order, packedProducts, out int points))
             {
                 // Complete the order
                 OrderManager.Instance.CompleteOrder(order);

@@ -147,9 +147,12 @@ namespace OrderUp.Environment
                 }
 
                 // Add sphere collider for easier interaction (required for cart functionality)
-                SphereCollider collider = cart.AddComponent<SphereCollider>();
-                collider.radius = 1.5f;
-                collider.isTrigger = false;
+                if (cart.GetComponent<SphereCollider>() == null)
+                {
+                    SphereCollider collider = cart.AddComponent<SphereCollider>();
+                    collider.radius = 1.5f;
+                    collider.isTrigger = false;
+                }
             }
 
             // Ensure Cart component is present (required for cart functionality)
@@ -213,10 +216,13 @@ namespace OrderUp.Environment
                 }
 
                 // Add box collider for interaction (required for station functionality)
-                BoxCollider collider = station.AddComponent<BoxCollider>();
-                collider.center = Vector3.up * 0.75f;
-                collider.size = new Vector3(2f, 1.5f, 2f);
-                collider.isTrigger = false;
+                if (station.GetComponent<BoxCollider>() == null)
+                {
+                    BoxCollider collider = station.AddComponent<BoxCollider>();
+                    collider.center = Vector3.up * 0.75f;
+                    collider.size = new Vector3(2f, 1.5f, 2f);
+                    collider.isTrigger = false;
+                }
             }
 
             // Ensure PackingStation component is present (required for station functionality)
